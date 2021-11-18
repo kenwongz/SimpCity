@@ -25,7 +25,13 @@ namespace SimpCity {
         }
 
         protected string GetMenuText() {
-            throw new NotImplementedException();
+            string buf = "";
+            for (int i = 0; i < this.Options.Count; i++) {
+                int opt = i + 1;
+                buf += opt.ToString() + ") " + this.Options[i].Description + "\n";
+            }
+            buf += "\n0) Exit\n";
+            return buf;
         }
 
 
@@ -34,14 +40,42 @@ namespace SimpCity {
         /// Displays the menu
         /// </summary>
         public void Display() {
-            throw new NotImplementedException();
+            Console.WriteLine(GetMenuText());
         }
 
         /// <summary>
         /// Asks for user input to execute the callback. Returns <i>true</i> if the user intends to exit.
         /// </summary>
         public bool AskInput(int? testOption = null) {
-            throw new NotImplementedException();
+            bool exit = false;
+            int option = 0;
+
+            if (testOption == null) {
+                Console.Write("Enter your option: ");
+                if (!int.TryParse(Console.ReadLine(), out option)) {
+                    Console.WriteLine("Invalid option");
+                    goto end;
+                }
+            } else {
+                option = (int)testOption;
+            }
+
+            if (option == 0) {
+                exit = true;
+                goto end;
+            }
+
+            if (option > 0 && option <= this.Options.Count) {
+                ConsoleMenuOption consoleOpt = this.Options[option - 1];
+                // Print the option the user picked
+                Console.WriteLine("Option " + option + ". " + consoleOpt.Description);
+                Console.WriteLine(new string('-', 26));
+                // Run the action
+                consoleOpt.Callback();
+            }
+
+end:
+            return exit;
         }
     }
 }
