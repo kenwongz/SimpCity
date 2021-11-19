@@ -39,33 +39,33 @@ namespace SimpCity {
     /// Creates an interactive console menu
     /// </summary>
     public class ConsoleMenu {
-        private readonly List<ConsoleMenuOption> Options;
-        private readonly IDictionary<string, ConsoleMenuOption> OptionsMap = new Dictionary<string, ConsoleMenuOption>();
-        private readonly IDictionary<int, ConsoleMenuHeading> Headings = new Dictionary<int, ConsoleMenuHeading>();
+        private readonly List<ConsoleMenuOption> options;
+        private readonly IDictionary<string, ConsoleMenuOption> optionsMap = new Dictionary<string, ConsoleMenuOption>();
+        private readonly IDictionary<int, ConsoleMenuHeading> headings = new Dictionary<int, ConsoleMenuHeading>();
 
         /// <summary>
         /// Executed before each interaction.
         /// </summary>
-        private Action CustomAction = null;
-        private int OptionsIndex = 0;
+        private Action customAction = null;
+        private int optionsIndex = 0;
 
         public ConsoleMenu() {
-            this.Options = new List<ConsoleMenuOption>();
+            this.options = new List<ConsoleMenuOption>();
         }
 
         public ConsoleMenu(List<ConsoleMenuOption> options) {
-            this.Options = options;
+            this.options = options;
         }
 
         protected string GetMenuText() {
             string buf = "";
-            for (int i = 0; i < this.Options.Count; i++) {
-                buf += this.Options[i].Label + ") " + this.Options[i].Description + "\n";
+            for (int i = 0; i < this.options.Count; i++) {
+                buf += this.options[i].Label + ") " + this.options[i].Description + "\n";
                 
                 // Display a header after this option
-                if (this.Headings.ContainsKey(i)) {
+                if (this.headings.ContainsKey(i)) {
                     buf += "\n";
-                    string heading = this.Headings[i].Description;
+                    string heading = this.headings[i].Description;
                     if (heading != null) {
                         buf += heading + "\n";
                     }
@@ -76,12 +76,12 @@ namespace SimpCity {
 
         public ConsoleMenu AddOption(string description, Action<ConsoleMenuCommand> callback = null, string customLabel = null) {
             if (customLabel == null) {
-                this.OptionsIndex++;
-                customLabel = this.OptionsIndex.ToString();
+                this.optionsIndex++;
+                customLabel = this.optionsIndex.ToString();
             }
             ConsoleMenuOption option = new ConsoleMenuOption(customLabel, description, callback);
-            this.OptionsMap[customLabel] = option;
-            this.Options.Add(option);
+            this.optionsMap[customLabel] = option;
+            this.options.Add(option);
             return this;
         }
 
@@ -95,9 +95,9 @@ namespace SimpCity {
 
         public ConsoleMenu AddHeading(string description = null, int after = -1) {
             if (after < 0) {
-                after = this.Options.Count - 1;
+                after = this.options.Count - 1;
             }
-            this.Headings[after] = new ConsoleMenuHeading(description);
+            this.headings[after] = new ConsoleMenuHeading(description);
             return this;
         }
 
@@ -105,7 +105,7 @@ namespace SimpCity {
         /// Executed before each interaction, and before the menu is displayed.
         /// </summary>
         public ConsoleMenu BeforeInteraction(Action callback) {
-            this.CustomAction = callback;
+            this.customAction = callback;
             return this;
         }
 
@@ -121,7 +121,7 @@ namespace SimpCity {
         /// </summary>
         /// <param name="testOption">Uses this as the input string instead of stdin, for tests purposes.</param>
         public bool AskInput(string testOption = null) {
-            this.CustomAction();
+            this.customAction();
             this.Display();
 
             string option = testOption;
@@ -130,12 +130,12 @@ namespace SimpCity {
                 option = Console.ReadLine().Trim();
             }
 
-            if (!this.OptionsMap.ContainsKey(option)) {
+            if (!this.optionsMap.ContainsKey(option)) {
                 Console.WriteLine("Invalid option");
                 return false;  // continue
             }
 
-            ConsoleMenuOption consoleOpt = this.OptionsMap[option];
+            ConsoleMenuOption consoleOpt = this.optionsMap[option];
             // Print the option the user picked
             Console.WriteLine("Option " + option + ". " + consoleOpt.Description);
             Console.WriteLine(new string('-', 26));
