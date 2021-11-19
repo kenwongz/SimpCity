@@ -88,7 +88,7 @@ namespace SimpCity {
         public ConsoleMenu AddExitOption(string description, Action<ConsoleMenuCommand> callback = null) {
             // Overload callback with exit instruction and custom label
             return AddOption(description, (cmd) => {
-                callback(cmd);
+                callback?.Invoke(cmd);
                 cmd.Exit();
             }, "0");
         }
