@@ -23,6 +23,22 @@ namespace SimpCityTests {
         }
 
         [TestMethod]
+        public void AskInput_ExecutesBeforeInteraction() {
+            bool testSwitch = false;
+
+            ConsoleMenu menu = new ConsoleMenu()
+                .BeforeInteraction((m) => {
+                    // change testSwitch to true
+                    testSwitch = true;
+                })
+                .AddOption("This is an option", (m) => {});
+
+            menu.AskInput("1");
+            // Check the switch is changed
+            Assert.IsTrue(testSwitch, "BeforeInteraction did not execute");
+        }
+
+        [TestMethod]
         public void AskInput_Exits_WhenRequested() {
             ConsoleMenu menu = new ConsoleMenu()
                 .AddOption("This is an option", (m) => { })
