@@ -130,7 +130,7 @@ namespace SimpCity {
         /// </summary>
         /// <param name="testOption">Uses this as the input string instead of stdin, for tests purposes.</param>
         public bool AskInput(string testOption = null) {
-            this.customAction(this);
+            this.customAction?.Invoke(this);
             this.Display();
 
             string option = testOption;
