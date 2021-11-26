@@ -54,5 +54,14 @@ namespace SimpCityTests {
             exit = menu.AskInput("0");
             Assert.IsTrue(exit);
         }
+
+        [TestMethod]
+        [ExpectedException(typeof(InvalidOperationException), "Trying to edit a non-existent label did not flag out..")]
+        public void EditOption_Throws_WhenInvalidLabel() {
+            ConsoleMenu menu = new ConsoleMenu()
+                .AddOption("This is an option", (m) => { });
+
+            menu.EditOption("ThisIsALabelThatDoesntExistDefinitely", "-");
+        }
     }
 }

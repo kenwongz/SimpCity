@@ -91,6 +91,19 @@ namespace SimpCity {
         }
 
         /// <summary>
+        /// Edit an option added by AddOption
+        /// </summary>
+        /// <exception cref="System.InvalidOperationException">When the label does not exist in the options</exception>
+        public ConsoleMenu EditOption(string label, string description, Action<ConsoleMenu> callback = null) {
+            if (!this.optionsMap.ContainsKey(label)) {
+                throw new InvalidOperationException("Label does not exist in the options: " + label);
+            }
+            this.optionsMap[label].Description = description;
+            this.optionsMap[label].Callback = callback;
+            return this;
+        }
+
+        /// <summary>
         /// Executed before each interaction, and before the menu is displayed.
         /// </summary>
         public ConsoleMenu BeforeInteraction(Action<ConsoleMenu> callback) {
