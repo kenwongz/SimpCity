@@ -2,24 +2,12 @@
 using System.Collections.Generic;
 
 namespace SimpCity {
-    public class ConsoleMenuCommand {
-        public bool ExitNext { get; set; } = false;
-
-        /// <summary>
-        /// For interactive displays, this signals the console menu to return after the command
-        /// callback is completed.
-        /// </summary>
-        public void Exit(bool exit = true) {
-            this.ExitNext = exit;
-        }
-    }
-
     public class ConsoleMenuOption {
         public string Label { get; set; }
         public string Description { get; set; }
-        public Action<ConsoleMenuCommand> Callback { get; set; }
+        public Action<ConsoleMenu> Callback { get; set; }
 
-        public ConsoleMenuOption(string label, string description, Action<ConsoleMenuCommand> callback = null) {
+        public ConsoleMenuOption(string label, string description, Action<ConsoleMenu> callback = null) {
             this.Label = label;
             this.Description = description;
             this.Callback = callback;
@@ -46,8 +34,9 @@ namespace SimpCity {
         /// <summary>
         /// Executed before each interaction.
         /// </summary>
-        private Action customAction = null;
+        private Action<ConsoleMenu> customAction = null;
         private int optionsIndex = 0;
+        private bool exitNext = false;
 
         public ConsoleMenu() {
             this.options = new List<ConsoleMenuOption>();
@@ -74,7 +63,7 @@ namespace SimpCity {
             return buf;
         }
 
-        public ConsoleMenu AddOption(string description, Action<ConsoleMenuCommand> callback = null, string customLabel = null) {
+        public ConsoleMenu AddOption(string description, Action<ConsoleMenu> callback = null, string customLabel = null) {
             if (customLabel == null) {
                 this.optionsIndex++;
                 customLabel = this.optionsIndex.ToString();
@@ -85,11 +74,11 @@ namespace SimpCity {
             return this;
         }
 
-        public ConsoleMenu AddExitOption(string description, Action<ConsoleMenuCommand> callback = null) {
+        public ConsoleMenu AddExitOption(string description, Action<ConsoleMenu> callback = null) {
             // Overload callback with exit instruction and custom label
-            return AddOption(description, (cmd) => {
-                callback?.Invoke(cmd);
-                cmd.Exit();
+            return AddOption(description, (menu) => {
+                callback?.Invoke(menu);
+                menu.Exit();
             }, "0");
         }
 
@@ -104,9 +93,16 @@ namespace SimpCity {
         /// <summary>
         /// Executed before each interaction, and before the menu is displayed.
         /// </summary>
-        public ConsoleMenu BeforeInteraction(Action callback) {
+        public ConsoleMenu BeforeInteraction(Action<ConsoleMenu> callback) {
             this.customAction = callback;
             return this;
+        }
+
+        /// For interactive display, this signals the console menu to return after the command
+        /// callback is completed.
+        /// </summary>
+        public void Exit(bool exit = true) {
+            this.exitNext = exit;
         }
 
         /// <summary>
@@ -121,7 +117,7 @@ namespace SimpCity {
         /// </summary>
         /// <param name="testOption">Uses this as the input string instead of stdin, for tests purposes.</param>
         public bool AskInput(string testOption = null) {
-            this.customAction();
+            this.customAction(this);
             this.Display();
 
             string option = testOption;
@@ -141,11 +137,10 @@ namespace SimpCity {
             Console.WriteLine(new string('-', 26));
 
             // Run the action
-            ConsoleMenuCommand cmd = new ConsoleMenuCommand();
-            consoleOpt.Callback?.Invoke(cmd);
+            consoleOpt.Callback?.Invoke(this);
 
             // Exit after this if signalled
-            return cmd.ExitNext;
+            return this.exitNext;
         }
 
         /// <summary>

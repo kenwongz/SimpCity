@@ -12,7 +12,7 @@ namespace SimpCityTests {
             bool testSwitch = false;
 
             ConsoleMenu menu = new ConsoleMenu()
-                .AddOption("This is an option", (_cmd) => {
+                .AddOption("This is an option", (m) => {
                     // change testSwitch to true
                     testSwitch = true;
                 });
@@ -25,7 +25,7 @@ namespace SimpCityTests {
         [TestMethod]
         public void AskInput_Exits_WhenRequested() {
             ConsoleMenu menu = new ConsoleMenu()
-                .AddOption("This is an option", (_cmd) => { })
+                .AddOption("This is an option", (m) => { })
                 .AddExitOption("Exit");
 
             bool exit;

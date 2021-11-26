@@ -4,11 +4,11 @@ namespace SimpCity {
     class Program {
         static void Main(string[] args) {
             ConsoleMenu menu = new ConsoleMenu()
-                .BeforeInteraction(() => Console.WriteLine("Welcome, mayor of Simp City!\n" + new string('=', 26)))
-                .AddOption("Start new game", (_cmd) => {
+                .BeforeInteraction((m) => Console.WriteLine("Welcome, mayor of Simp City!\n" + new string('=', 26)))
+                .AddOption("Start new game", (m) => {
                     Console.WriteLine("TODO new game");
                     })
-                .AddOption("Load saved game", (_cmd) => {
+                .AddOption("Load saved game", (m) => {
                     Console.WriteLine("TODO load game");
                 })
                 .AddHeading()
