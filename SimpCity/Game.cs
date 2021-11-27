@@ -64,6 +64,7 @@ namespace SimpCity {
         public void Restore() {
             // TODO: US-5 - restore state
             // grid = filesaver.load()
+            // test
             throw new NotImplementedException();
         }
 
