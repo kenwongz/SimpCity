@@ -6,10 +6,13 @@ namespace SimpCity {
             ConsoleMenu menu = new ConsoleMenu()
                 .BeforeInteraction((m) => Console.WriteLine("Welcome, mayor of Simp City!\n" + new string('=', 26)))
                 .AddOption("Start new game", (m) => {
-                    Console.WriteLine("TODO new game");
-                    })
+                    Game game = new Game();
+                    game.Play();
+                })
                 .AddOption("Load saved game", (m) => {
-                    Console.WriteLine("TODO load game");
+                    Game game = new Game();
+                    game.Restore();
+                    game.Play();
                 })
                 .AddHeading()
                 .AddExitOption("Exit");
