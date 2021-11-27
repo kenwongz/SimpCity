@@ -15,4 +15,4 @@ Unit tests are contained in a separate project known as `SimpCityTests`. To run 
 ## Software development methodology considerations
 
 Pls press the link for the methodology consideration docs
-https://docs.google.com/document/d/1vTlHoL3jKC2AJoeWhjEfqKtL11vIdqFXkcmG3X_7Gog/edit
+https://docs.google.com/document/d/1vTlHoL3jKC2AJoeWhjEfqKtL11vIdqFXkcmG3X_7Gog/edit?usp=sharing
