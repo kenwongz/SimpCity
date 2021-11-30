@@ -5,7 +5,7 @@ namespace SimpCity {
     /// <summary>
     /// A simple abstraction of X, Y coordinate
     /// </summary>
-    class CityGridPosition {
+    public class CityGridPosition {
         public int X { get; set; }
         public int Y { get; set; }
 
@@ -26,17 +26,13 @@ namespace SimpCity {
     /// <summary>
     /// Represents a building in the grid.
     /// </summary>
-    abstract class CityGridBuilding {
-        public static string Name { get; protected set; }
-        /// <summary>
-        /// The 3-character code for the building
-        /// </summary>
-        public static string Code { get; protected set; }
-
+    public abstract class CityGridBuilding {
         public CityGrid Grid { get; protected set; }
-        
-        public CityGridBuilding(CityGrid grid) {
-            Grid = grid;
+        public BuildingInfo Info { get; protected set; }
+
+        public CityGridBuilding(BuildingInfo info) {
+            Info = info;
+            Grid = info.Grid;
         }
 
         /// <summary>
@@ -44,6 +40,7 @@ namespace SimpCity {
         /// </summary>
         /// <exception cref="System.InvalidOperationException">When the building already has a spot in the grid</exception>
         /// <exception cref="System.IndexOutOfRangeException">When the position is out of bounds</exception>
+        /// <exception cref="System.ArgumentOutOfRangeException">When the position is already occupied</exception>
         public void Add(CityGridPosition pos) {
             Grid.Add(this, pos);
         }
@@ -68,7 +65,7 @@ namespace SimpCity {
     /// <summary>
     /// Represents a city of specified grid dimensions.
     /// </summary>
-    class CityGrid {
+    public class CityGrid {
         // For information about the multidimensional array syntax, see:
         // https://docs.microsoft.com/en-us/dotnet/csharp/programming-guide/arrays/multidimensional-
         /// <summary>
@@ -101,12 +98,16 @@ namespace SimpCity {
         /// </summary>
         /// <exception cref="System.InvalidOperationException">When the item already has a spot in the grid</exception>
         /// <exception cref="System.IndexOutOfRangeException">When the position is out of bounds</exception>
+        /// <exception cref="System.ArgumentOutOfRangeException">When the position is already occupied</exception>
         public void Add(CityGridBuilding item, CityGridPosition pos) {
             if (itemPosition.ContainsKey(item)) {
                 throw new System.InvalidOperationException("Item already has a spot in the grid at: " + itemPosition[item]);
             }
             if (!IsWithin(pos)) {
                 throw new System.IndexOutOfRangeException("Position not in grid boundary: " + pos);
+            }
+            if (grid[pos.X, pos.Y] != null) {
+                throw new System.ArgumentOutOfRangeException("The position is already occupied: " + pos);
             }
             grid[pos.X, pos.Y] = item;
             itemPosition[item] = pos.Clone();

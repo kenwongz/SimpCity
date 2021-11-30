@@ -51,6 +51,7 @@
   <ItemGroup>
     <Compile Include="ConsoleMenuTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="GameTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
