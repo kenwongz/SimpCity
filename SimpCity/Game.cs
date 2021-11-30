@@ -4,17 +4,23 @@ using SimpCity.buildings;
 
 namespace SimpCity {
     public enum BuildingTypes {
-        Beach,
+        Beach
     }
 
+    public delegate CityGridBuilding MakeNewFunc(BuildingInfo info);
     public class BuildingInfo {
         public BuildingTypes Type { get; set; }
+        public string Name { get; set; }
         /// <summary>
         /// The 3-character code for the building
         /// </summary>
         public string Code { get; set; }
         public int CopiesLeft { get; set; }
-        public Action MakeNew { get; set; }
+        public CityGrid Grid { get; set; }
+        /// <summary>
+        /// The callback to execute to return the building object
+        /// </summary>
+        public MakeNewFunc MakeNew { get; set; }
     }
 
     public class Game {
@@ -31,48 +37,92 @@ namespace SimpCity {
             grid = new CityGrid(GRID_WIDTH, GRID_HEIGHT);
             round = 0;
 
-            // Exhaustive list of buildings and their operations.
-            // Type & CopiesLeft are automatically assigned after this.
+            // Exhaustive list of buildings and their operations
             buildingInfo = new Dictionary<BuildingTypes, BuildingInfo>() {
                 {
                     BuildingTypes.Beach, new BuildingInfo() {
                         Code = Beach.Code,
-                        MakeNew = () => new Beach(grid)
+                        Name = Beach.Name,
+                        MakeNew = (info) => new Beach(info)
                     }
                 }
             };
 
-            // Assign Type and CopiesLeft
+            // Automatically assign Type, CopiesLeft & Grid
             foreach (var item in buildingInfo) {
                 item.Value.Type = item.Key;
                 item.Value.CopiesLeft = BUILDING_COPIES;
+                item.Value.Grid = grid;
             }
         }
 
         /// <summary>
-        /// Saves the current grid data into the file.
+        /// Display an ASCII wizardry..
         /// </summary>
+        protected void DisplayGrid() {
+            Console.WriteLine("Turn " + round);
+            CityGridBuilding[,] rawGrid = grid.GetRawGrid();
+
+            for (int y = 0; y < grid.Height; y++) {
+
+                // Print the horizontal heading
+                if (y == 0) {
+                    for (int x = 0; x < grid.Width; x++) {
+                        char alphabet = (char)('A' + x);
+                        Console.Write("     " + alphabet.ToString());
+                    }
+                    Console.WriteLine("");
+                }
+
+                Console.WriteLine("  " + Utils.RepeatString("+-----", grid.Width) + "+");
+
+                for (int x = 0; x < grid.Width; x++) {
+
+                    // Print the vertical heading
+                    if (x == 0) {
+                        Console.Write(y + 1);
+                    }
+                    var building = rawGrid[x, y];
+                    Console.Write(" | " + (building?.Info.Code ?? "   "));
+                }
+                Console.WriteLine("");
+            }
+        }
+
+        /// <summary>
+        /// This is triggered when the player chooses "Build <X>" option in the game.
+        /// </summary>
+        protected void MakeMove(BuildingInfo info) {
+            throw new NotImplementedException();
+        }
+
         public void Save() {
             // TODO: US-3 - save state
-            // filesaver.save(grid);
             throw new NotImplementedException();
         }
 
-        /// <summary>
-        /// Loads the grid data from file into the grid data structure.
-        /// </summary>
         public void Restore() {
             // TODO: US-5 - restore state
-            // grid = filesaver.load()
             throw new NotImplementedException();
         }
 
-        /// <summary>
-        /// Blockingly runs the game until the user explicitly exits.
-        /// </summary>
         public void Play() {
-            // TODO: US-2 - gameplay
-            throw new NotImplementedException();
+            ConsoleMenu menu = new ConsoleMenu()
+                .BeforeInteraction((m) => {
+                    // Display the current grid
+                    DisplayGrid();
+                })
+                // These two placeholders will be edited accordingly before each interaction
+                .AddOption("Placeholder 1")
+                .AddOption("Placeholder 2")
+                .AddOption("See remaining buildings", (m) => Console.WriteLine("Todo remaining building"))
+                .AddOption("See current score", (m) => Console.WriteLine("Todo curr score"))
+                .AddHeading()
+                .AddOption("Save game", (m) => Console.WriteLine("Todo save game"))
+                .AddExitOption("Exit to main menu");
+
+            menu.DisplayInteraction();
+
         }
     }
 }
