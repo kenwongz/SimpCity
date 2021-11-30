@@ -108,20 +108,21 @@ namespace SimpCity {
         /// <summary>
         /// Loads the grid data from file into the grid data structure.
         /// </summary>
-        public void Restore(List<Game> Gamelist ) {
+        public void Restore() {
             string[] glist = File.ReadAllLines("Grid.csv");
-
+            var b = new Beach(buildingInfo[BuildingTypes.Beach]);
+            grid.Add(b, new CityGridPosition(1, 0));
             for (int i = 1; i < glist.Length; i++) 
             {
                 string[] data = glist[i].Split(',');
-
+                
+                
             }
             
 
             // TODO: US-5 - restore state
             // grid = filesaver.load()
             // test
-            throw new NotImplementedException();
         }
 
         public void Play() {
