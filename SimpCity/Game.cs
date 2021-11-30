@@ -7,7 +7,7 @@ namespace SimpCity {
         Beach
     }
 
-    public delegate CityGridBuilding MakeNewFunc(BuildingInfo info);
+    public delegate CityGridBuilding MakeNewFunc();
     public class BuildingInfo {
         public BuildingTypes Type { get; set; }
         public string Name { get; set; }
@@ -43,7 +43,7 @@ namespace SimpCity {
                     BuildingTypes.Beach, new BuildingInfo() {
                         Code = Beach.Code,
                         Name = Beach.Name,
-                        MakeNew = (info) => new Beach(info)
+                        MakeNew = () => new Beach(buildingInfo[BuildingTypes.Beach])
                     }
                 }
             };
