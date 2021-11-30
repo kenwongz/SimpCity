@@ -1,6 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using SimpCity.buildings;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.IO;
 
 namespace SimpCity {
     public enum BuildingTypes {
@@ -61,7 +65,16 @@ namespace SimpCity {
         /// <summary>
         /// Loads the grid data from file into the grid data structure.
         /// </summary>
-        public void Restore() {
+        public void Restore(List<Game> Gamelist ) {
+            string[] glist = File.ReadAllLines("test.csv");
+
+            for (int i = 1; i < glist.Length; i++) 
+            {
+                string[] data = glist[i].Split(',');
+
+            }
+            
+
             // TODO: US-5 - restore state
             // grid = filesaver.load()
             // test
