@@ -66,7 +66,7 @@ namespace SimpCity {
         /// Loads the grid data from file into the grid data structure.
         /// </summary>
         public void Restore(List<Game> Gamelist ) {
-            string[] glist = File.ReadAllLines("test.csv");
+            string[] glist = File.ReadAllLines("Grid.csv");
 
             for (int i = 1; i < glist.Length; i++) 
             {
