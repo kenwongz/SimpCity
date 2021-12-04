@@ -102,7 +102,17 @@ namespace SimpCity {
 
         public void Save() {
             // TODO: US-3 - save state
-            throw new NotImplementedException();
+            CityGridBuilding[,] rawGrid = grid.GetRawGrid();
+
+            for (int y = 0; y < grid.Height; y++) {
+                //line = "";
+                for (int x = 0; x < grid.Width; x++) {
+                    var b = grid.Get(new CityGridPosition(x, y));
+                    //if (b is null) { "x"} else if (b is Beach) { "BCH"}
+                    //line += "," + ;
+                }
+                Console.WriteLine("");
+            }
         }
 
         /// <summary>
@@ -110,7 +120,7 @@ namespace SimpCity {
         /// </summary>
         public void Restore() {
             string[] glist = File.ReadAllLines("Grid.csv");
-            var b = new Beach(buildingInfo[BuildingTypes.Beach]);
+            var b = buildingInfo[BuildingTypes.Beach].MakeNew();
             grid.Add(b, new CityGridPosition(1, 0));
             for (int i = 1; i < glist.Length; i++) 
             {
