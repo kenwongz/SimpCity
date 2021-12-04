@@ -11,6 +11,7 @@ namespace SimpCity {
         Beach
     }
 
+
     public delegate CityGridBuilding MakeNewFunc();
     public class BuildingInfo {
         public BuildingTypes Type { get; set; }
@@ -119,23 +120,36 @@ namespace SimpCity {
         /// Loads the grid data from file into the grid data structure.
         /// </summary>
         public void Restore() {
-            string[] glist = File.ReadAllLines("Grid.csv");
-            var b = buildingInfo[BuildingTypes.Beach].MakeNew();
-            grid.Add(b, new CityGridPosition(1, 0));
-            for (int i = 1; i < glist.Length; i++) 
-            {
-                string[] data = glist[i].Split(',');
-                
-                
+            int count = 0;
+            int colcount = 0;
+            IEnumerable<string> glist = File.ReadLines("Grid.csv");
+            foreach (var line in File.ReadLines("Grid.csv")) {
+                count += 1;
+                string rowlist = line.ToString();
+                string[] row = rowlist.Split(','); 
+                foreach (var column in row) {
+                    colcount += 1;
+                    string col = column.ToString();
+                    if (col == "BCH") {
+                        var b = buildingInfo[BuildingTypes.Beach].MakeNew();
+                        grid.Add(b, new CityGridPosition(colcount - 1, count - 1));
+                        
+                    }
+                   
+                }
+                colcount = 0;
+                //Do something
+
             }
-            
+
 
             // TODO: US-5 - restore state
             // grid = filesaver.load()
             // test
         }
 
-        public void Play() {
+
+            public void Play() {
             ConsoleMenu menu = new ConsoleMenu()
                 .BeforeInteraction((m) => {
                     // Display the current grid

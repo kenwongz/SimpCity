@@ -44,6 +44,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="buildings\Beach.cs" />
+    <Compile Include="buildings\House.cs" />
     <Compile Include="CityGrid.cs" />
     <Compile Include="Game.cs" />
     <Compile Include="ConsoleMenu.cs" />
