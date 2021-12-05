@@ -61,7 +61,6 @@ namespace SimpCity {
         /// </summary>
         protected void DisplayGrid() {
             Console.WriteLine("Turn " + round);
-            CityGridBuilding[,] rawGrid = grid.GetRawGrid();
 
             for (int y = 0; y < grid.Height; y++) {
 
@@ -82,7 +81,7 @@ namespace SimpCity {
                     if (x == 0) {
                         Console.Write(y + 1);
                     }
-                    var building = rawGrid[x, y];
+                    var building = grid.Get(new CityGridPosition(x, y));
                     Console.Write(" | " + (building?.Info.Code ?? "   "));
                 }
                 Console.WriteLine("");
