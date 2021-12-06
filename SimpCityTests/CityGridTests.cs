@@ -34,43 +34,14 @@ namespace SimpCityTests {
         }
 
         /// <summary>
-        /// Grid test utility to easily assert building type in the grid.
-        /// </summary>
-        /// <param name="compare">A multidimensional array of 3-letter codes of the building to compare against.</param>
-        /// <example>
-        /// IsEqual(grid, {
-        ///      { "HSE", null },
-        ///      { null, "BCH" }
-        /// });
-        /// </example>
-        public bool IsEqual(CityGrid grid, string[,] compare) {
-            for (int y = 0; y < grid.Height; y++) {
-                for (int x = 0; x < grid.Width; x++) {
-                    CityGridBuilding b = grid.Get(new CityGridPosition(x, y));
-                    if (string.IsNullOrEmpty(compare[x, y])) {
-                        if (b is null) {
-                            continue;
-                        } else {
-                            return false;
-                        }
-                    }
-                    if (b.Info.Code != compare[x, y]) {
-                        return false;
-                    }
-                }
-            }
-            return true;
-        }
-
-        /// <summary>
         /// Tests if the test utility equality method is working.
         /// </summary>
         [TestMethod]
-        public void TestIsEquals_ReturnsTrue_WhenEqual() {
+        public void IsGridEqual_ReturnsTrue_WhenEqual() {
             CityGrid cg = new CityGrid(4, 4);
             cg.Add(buildingInfo[BuildingTypes.Beach].MakeNew(), new CityGridPosition(0, 3));
             cg.Add(buildingInfo[BuildingTypes.Beach].MakeNew(), new CityGridPosition(3, 0));
-            Assert.IsTrue(IsEqual(cg, new string[4,4] {
+            Assert.IsTrue(TestUtils.IsGridEqual(cg, new string[4,4] {
                 { null, null, null, "BCH" },
                 { null, null, null, null },
                 { null, null, null, null },
@@ -82,11 +53,11 @@ namespace SimpCityTests {
         /// Tests if the test utility equality method is working.
         /// </summary>
         [TestMethod]
-        public void TestIsEquals_ReturnsFalse_WhenNotEqual() {
+        public void IsGridEqual_ReturnsFalse_WhenNotEqual() {
             CityGrid cg = new CityGrid(4, 4);
             cg.Add(buildingInfo[BuildingTypes.Beach].MakeNew(), new CityGridPosition(0, 3));
             cg.Add(buildingInfo[BuildingTypes.Beach].MakeNew(), new CityGridPosition(3, 0));
-            Assert.IsFalse(IsEqual(cg, new string[4, 4] {
+            Assert.IsFalse(TestUtils.IsGridEqual(cg, new string[4, 4] {
                 { null, null, "BCH", null },
                 { null, null, null, null },
                 { null, null, null, null },

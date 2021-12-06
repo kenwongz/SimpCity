@@ -14,6 +14,7 @@ namespace SimpCityTests {
         [TestMethod]
         public void TestMethod1() {
             //new Game().MakeMove(null);
+            
         }
     }
 }
