@@ -1,11 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using SimpCity.buildings;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.IO;
 
 namespace SimpCity {
     public enum BuildingTypes {
         Beach
     }
+
 
     public delegate CityGridBuilding MakeNewFunc();
     public class BuildingInfo {
@@ -98,15 +103,53 @@ namespace SimpCity {
 
         public void Save() {
             // TODO: US-3 - save state
-            throw new NotImplementedException();
+            CityGridBuilding[,] rawGrid = grid.GetRawGrid();
+
+            for (int y = 0; y < grid.Height; y++) {
+                //line = "";
+                for (int x = 0; x < grid.Width; x++) {
+                    var b = grid.Get(new CityGridPosition(x, y));
+                    //if (b is null) { "x"} else if (b is Beach) { "BCH"}
+                    //line += "," + ;
+                }
+                Console.WriteLine("");
+            }
         }
 
+        /// <summary>
+        /// Loads the grid data from file into the grid data structure.
+        /// </summary>
         public void Restore() {
+            int count = 0;
+            int colcount = 0;
+            IEnumerable<string> glist = File.ReadLines("Grid.csv");
+            foreach (var line in File.ReadLines("Grid.csv")) {
+                count += 1;
+                string rowlist = line.ToString();
+                string[] row = rowlist.Split(','); 
+                foreach (var column in row) {
+                    colcount += 1;
+                    string col = column.ToString();
+                    if (col == "BCH") {
+                        var b = buildingInfo[BuildingTypes.Beach].MakeNew();
+                        grid.Add(b, new CityGridPosition(colcount - 1, count - 1));
+                        
+                    }
+                   
+                }
+                colcount = 0;
+                //Do something
+
+            }
+
+
             // TODO: US-5 - restore state
-            throw new NotImplementedException();
+            // grid = filesaver.load()
+            // test
         }
 
-        public void Play() {
+
+            public void Play() {
             ConsoleMenu menu = new ConsoleMenu()
                 .BeforeInteraction((m) => {
                     // Display the current grid

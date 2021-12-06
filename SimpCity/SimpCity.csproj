@@ -44,6 +44,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="buildings\Beach.cs" />
+    <Compile Include="buildings\House.cs" />
     <Compile Include="CityGrid.cs" />
     <Compile Include="Game.cs" />
     <Compile Include="ConsoleMenu.cs" />
@@ -54,6 +55,9 @@
   <ItemGroup>
     <None Include=".editorconfig" />
     <None Include="App.config" />
+    <None Include="Grid.csv">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
