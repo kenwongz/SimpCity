@@ -71,8 +71,9 @@ namespace SimpCity {
         /// <summary>
         /// A multidimensional array of rows, columns
         /// </summary>
-        private readonly CityGridBuilding[,] grid;
+        protected internal readonly CityGridBuilding[,] grid;
         private readonly IDictionary<CityGridBuilding, CityGridPosition> itemPosition;
+
         public int Width { get; private set; }
         public int Height { get; private set; }
 
@@ -130,6 +131,9 @@ namespace SimpCity {
         public CityGridPosition PositionOf(CityGridBuilding item) {
             return itemPosition.ContainsKey(item) ? itemPosition[item].Clone() : null;
         }
+
+        // TODO: Marked for deprecation
+        // We should attempt to encapsulate implementation specifics wherever possible.
 
         /// <summary>
         /// Retrieves the raw grid in multidimensional array form.

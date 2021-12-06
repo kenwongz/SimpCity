@@ -3,26 +3,6 @@ using System.Collections.Generic;
 using SimpCity.buildings;
 
 namespace SimpCity {
-    public enum BuildingTypes {
-        Beach
-    }
-
-    public delegate CityGridBuilding MakeNewFunc();
-    public class BuildingInfo {
-        public BuildingTypes Type { get; set; }
-        public string Name { get; set; }
-        /// <summary>
-        /// The 3-character code for the building
-        /// </summary>
-        public string Code { get; set; }
-        public int CopiesLeft { get; set; }
-        public CityGrid Grid { get; set; }
-        /// <summary>
-        /// The callback to execute to return the building object
-        /// </summary>
-        public MakeNewFunc MakeNew { get; set; }
-    }
-
     public class Game {
         private const int GRID_WIDTH = 4;
         private const int GRID_HEIGHT = 4;
@@ -91,7 +71,7 @@ namespace SimpCity {
         /// <summary>
         /// This is triggered when the player chooses "Build <X>" option in the game.
         /// </summary>
-        protected void MakeMove(BuildingInfo info) {
+        protected internal void MakeMove(BuildingInfo info) {
             throw new NotImplementedException();
         }
 
