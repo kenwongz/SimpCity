@@ -54,9 +54,19 @@ namespace SimpCityTests {
             CityGridPosition pos = Game.InputToPos("A1");
             Assert.IsTrue(pos.X == 0 && pos.Y == 0);
 
-            // Check at 2,3
-            pos = Game.InputToPos("C4");
+            // Check at 2,3 ; with lowercase alphabet
+            pos = Game.InputToPos("c4");
             Assert.IsTrue(pos.X == 2 && pos.Y == 3);
+        }
+
+        /// <summary>
+        /// N/A:
+        /// This ensures that the function will throw an error when an existing position is given.
+        /// </summary>
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentException), "Trying to supply an invalid coordinate format did not flag out..")]
+        public void InputToPos_Throws_WhenInputWrongly() {
+            Game.InputToPos("You are my sunshine.");
         }
     }
 }
