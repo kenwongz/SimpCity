@@ -50,6 +50,7 @@
     <Compile Include="ConsoleMenu.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ScRandom.cs" />
     <Compile Include="Utils.cs" />
   </ItemGroup>
   <ItemGroup>

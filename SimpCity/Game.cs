@@ -41,8 +41,29 @@ namespace SimpCity {
         /// </summary>
         /// <exception cref="System.ArgumentException">When the input is not a supported coordinate format</exception>
         protected internal static CityGridPosition InputToPos(string inputPos) {
-            // TODO.
-            throw new NotImplementedException();
+            if (inputPos == null) {
+                throw new ArgumentException("Input not a supported coordinate format: " + inputPos ?? "(null)");
+            }
+
+            // Sanitise first
+            inputPos = inputPos.Trim().ToUpper();
+            if (inputPos.Length != 2) {
+                throw new ArgumentException("Input not a supported coordinate format: " + inputPos ?? "(null)");
+            }
+
+            // Convert letter to positional index
+            int x = inputPos[0] - 'A';
+            int y = inputPos[1] - '1';
+
+            return new CityGridPosition(x, y);
+        }
+
+        /// <summary>
+        /// Chooses a random building type.
+        /// </summary>
+        protected internal static BuildingTypes RandomBuildingType() {
+            Array values = Enum.GetValues(typeof(BuildingTypes));
+            return (BuildingTypes)values.GetValue(ScRandom.GetInstance().Next(values.Length));
         }
 
         /// <summary>
@@ -91,7 +112,26 @@ namespace SimpCity {
         /// This is triggered when the player chooses "Build <X>" option in the game.
         /// </summary>
         protected void OnMakeMove(BuildingInfo info) {
-            throw new NotImplementedException();
+            // Gather coordinate from input
+            CityGridPosition pos;
+            while (true) {
+                Console.Write("Choose the position to build: ");
+                try {
+                    pos = InputToPos(Console.ReadLine());
+                    break;
+                } catch (ArgumentException ex) {
+                    Console.WriteLine(ex.Message);
+                    continue;
+                }
+            }
+
+            // Build at the specified position
+            try {
+                BuildAt(info, pos);
+            } catch (Exception ex) {
+                Console.WriteLine(ex.Message);
+            }
+            
         }
 
         public void Save() {
@@ -109,6 +149,16 @@ namespace SimpCity {
                 .BeforeInteraction((m) => {
                     // Display the current grid
                     DisplayGrid();
+                    // Choose random 2 buildings
+                    for (int i = 1; i < 3; i++) {
+                        BuildingTypes chosen = RandomBuildingType();
+                        // Replace the menu option
+                        m.EditOption(
+                            i.ToString(), string.Format("Build a {0}", buildingInfo[chosen].Code),
+                            // Create a new building object and make the move
+                            (_) => OnMakeMove(buildingInfo[chosen])
+                        );
+                    }
                 })
                 // These two placeholders will be edited accordingly before each interaction
                 .AddOption("Placeholder 1")
