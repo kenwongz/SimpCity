@@ -1,12 +1,15 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
-using System.Collections.Generic;
 using SimpCity;
 
 
 namespace SimpCityTests {
     [TestClass]
     public class ConsoleMenuTests {
+        /// <summary>
+        /// QA-SN-1.1:
+        /// This ensures that the game will blockingly run.
+        /// </summary>
         [TestMethod]
         public void AskInput_ExecutesCallbacks() {
             bool testSwitch = false;
@@ -22,8 +25,12 @@ namespace SimpCityTests {
             Assert.IsTrue(testSwitch);
         }
 
+        /// <summary>
+        /// QA-SN-1.2:
+        /// This ensures that the game will display the grid before the menu.
+        /// </summary>
         [TestMethod]
-        public void AskInput_ExecutesBeforeInteraction() {
+        public void AskInput_Executes_BeforeInteraction() {
             bool testSwitch = false;
 
             ConsoleMenu menu = new ConsoleMenu()
@@ -38,6 +45,10 @@ namespace SimpCityTests {
             Assert.IsTrue(testSwitch, "BeforeInteraction did not execute");
         }
 
+        /// <summary>
+        /// QA-SN-2.1, QA-SN-9.1:
+        /// This ensures that the game will exit when requested.
+        /// </summary>
         [TestMethod]
         public void AskInput_Exits_WhenRequested() {
             ConsoleMenu menu = new ConsoleMenu()

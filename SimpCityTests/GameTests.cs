@@ -9,12 +9,14 @@ namespace SimpCityTests {
     [TestClass]
     public class GameTests {
         /// <summary>
-        /// QA-S/N-5: Play the game
+        /// QA-SN-5.1:
+        /// This ensures that the game can place buildings down.
         /// </summary>
         [TestMethod]
-        public void TestMethod1() {
+        public void MakeMove_PlacesBuilding_WhenCalledProperly() {
+            // TODO.
             //new Game().MakeMove(null);
-            
+            Assert.Fail();
         }
     }
 }
