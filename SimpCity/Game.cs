@@ -37,6 +37,15 @@ namespace SimpCity {
         }
 
         /// <summary>
+        /// Converts a user input in "A1".."D4" coordinate form into a grid position,
+        /// </summary>
+        /// <exception cref="System.ArgumentException">When the input is not a supported coordinate format</exception>
+        protected internal static CityGridPosition InputToPos(string inputPos) {
+            // TODO.
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
         /// Display an ASCII wizardry..
         /// </summary>
         protected void DisplayGrid() {

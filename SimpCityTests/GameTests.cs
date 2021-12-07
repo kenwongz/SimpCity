@@ -43,5 +43,20 @@ namespace SimpCityTests {
             // Build a beach at 0,1 again ; this should throw
             game.BuildAt(game.buildingInfo[BuildingTypes.Beach], new CityGridPosition(0, 1));
         }
+
+        /// <summary>
+        /// N/A:
+        /// This ensures that a position input is correctly mapped.
+        /// </summary>
+        [TestMethod]
+        public void InputToPos_ReturnsCorrectly_WhenInputProperly() {
+            // Check at 0,0
+            CityGridPosition pos = Game.InputToPos("A1");
+            Assert.IsTrue(pos.X == 0 && pos.Y == 0);
+
+            // Check at 2,3
+            pos = Game.InputToPos("C4");
+            Assert.IsTrue(pos.X == 2 && pos.Y == 3);
+        }
     }
 }
