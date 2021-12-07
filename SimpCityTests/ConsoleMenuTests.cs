@@ -67,7 +67,7 @@ namespace SimpCityTests {
         }
 
         /// <summary>
-        /// QA-SN-3.1:
+        /// QA-SN-3.1, QA-SN-10.1:
         /// This ensures that the function will not break and resumes regular operation when an
         /// invalid option is supplied.
         /// </summary>
