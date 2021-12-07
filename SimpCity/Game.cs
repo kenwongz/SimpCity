@@ -9,9 +9,9 @@ namespace SimpCity {
         private const int MAX_ROUNDS = GRID_WIDTH * GRID_HEIGHT;
         private const int BUILDING_COPIES = 8;
 
-        private readonly IDictionary<BuildingTypes, BuildingInfo> buildingInfo;
-        private readonly CityGrid grid;
-        private int round;
+        protected internal readonly IDictionary<BuildingTypes, BuildingInfo> buildingInfo;
+        protected internal readonly CityGrid grid;
+        protected internal int round;
 
         public Game() {
             grid = new CityGrid(GRID_WIDTH, GRID_HEIGHT);
@@ -69,9 +69,19 @@ namespace SimpCity {
         }
 
         /// <summary>
+        /// Builds a new building at the specified position.
+        /// </summary>
+        /// <exception cref="System.InvalidOperationException">When the building already has a spot in the grid</exception>
+        /// <exception cref="System.IndexOutOfRangeException">When the position is out of bounds</exception>
+        /// <exception cref="System.ArgumentOutOfRangeException">When the position is already occupied</exception>
+        protected internal void BuildAt(BuildingInfo info, CityGridPosition pos) {
+            info.MakeNew().Add(pos);
+        }
+
+        /// <summary>
         /// This is triggered when the player chooses "Build <X>" option in the game.
         /// </summary>
-        protected internal void MakeMove(BuildingInfo info) {
+        protected void OnMakeMove(BuildingInfo info) {
             throw new NotImplementedException();
         }
 
