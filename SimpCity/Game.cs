@@ -109,10 +109,13 @@ namespace SimpCity {
                 //line = "";
                 for (int x = 0; x < grid.Width; x++) {
                     var b = grid.Get(new CityGridPosition(x, y));
-                    //if (b is null) { "x"} else if (b is Beach) { "BCH"}
-                    //line += "," + ;
+                    using (StreamWriter csv = new StreamWriter("Grid.csv", true)) {
+                        csv.Write("");
+                        csv.WriteLine(rawGrid);
+                    }
                 }
                 Console.WriteLine("");
+                Console.Write("Game saved successfully");
             }
         }
 
@@ -143,9 +146,7 @@ namespace SimpCity {
             }
 
 
-            // TODO: US-5 - restore state
-            // grid = filesaver.load()
-            // test
+
         }
 
 
