@@ -2,6 +2,18 @@
 
 SimpCity is a console application written in C# using the .NET Framework.
 
+### Team Members:
+
+Scrum Master: Kenneth Wong (kenwongz)
+
+Tech Lead: Lim Wei Hao (jordie007)
+
+QA: Jeremy Sim (JSQJ)
+
+Developers: Caelan Ng (CaeNGnp)
+            
+            Ramesh Harish (Harish110)
+
 ## Development notes
 
 This repository is only tested with the **Visual Studio 2019 (Community edition)** (>= v16.11), and you are strongly recommended to use this IDE to avoid possible conflicts or errors.
@@ -20,10 +32,3 @@ https://docs.google.com/document/d/1vTlHoL3jKC2AJoeWhjEfqKtL11vIdqFXkcmG3X_7Gog/
 ## Gantt Chart Planning
 Please press the link for the project timeline as well as the development timeline
 https://sharing.clickup.com/g/h/4-43635941-7/594929f199e685a 
-
-Team Members:
-Scrum Master: Kenneth Wong (kenwongz)
-Tech Lead: Lim Wei Hao (jordie007)
-QA: Jeremy Sim (JSQJ)
-Developers: Caelan Ng (CaeNGnp)
-            Ramesh Harish (Harish110)
