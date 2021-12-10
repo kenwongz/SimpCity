@@ -17,6 +17,13 @@ Unit tests are contained in a separate project known as `SimpCityTests`. To run 
 Please press the link for the methodology consideration docs
 https://docs.google.com/document/d/1vTlHoL3jKC2AJoeWhjEfqKtL11vIdqFXkcmG3X_7Gog/edit?usp=sharing
 
-## Grantt Chart Planning
+## Gantt Chart Planning
 Please press the link for the project timeline as well as the development timeline
 https://sharing.clickup.com/g/h/4-43635941-7/594929f199e685a 
+
+Team Members:
+Scrum Master: Kenneth Wong (kenwongz)
+Tech Lead: Lim Wei Hao (jordie007)
+QA: Jeremy Sim (JSQJ)
+Developers: Caelan Ng (CaeNGnp)
+            Ramesh Harish (Harish110)
