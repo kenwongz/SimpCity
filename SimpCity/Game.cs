@@ -137,20 +137,18 @@ namespace SimpCity {
 
         public void Save() {
             // TODO: US-3 - save state
-            CityGridBuilding[,] rawGrid = grid.GetRawGrid();
-
             for (int y = 0; y < grid.Height; y++) {
                 //line = "";
                 for (int x = 0; x < grid.Width; x++) {
                     var b = grid.Get(new CityGridPosition(x, y));
                     using (StreamWriter csv = new StreamWriter("Grid.csv", true)) {
                         csv.Write("");
-                        csv.WriteLine(rawGrid);
+                        csv.WriteLine(b);
                     }
                 }
-                Console.WriteLine("");
-                Console.Write("Game saved successfully");
             }
+            Console.WriteLine("");
+            Console.Write("Game saved successfully");
         }
 
         /// <summary>
@@ -179,8 +177,6 @@ namespace SimpCity {
 
             }
 
-
-
         }
 
         public void Play() {
@@ -205,7 +201,9 @@ namespace SimpCity {
                 .AddOption("See remaining buildings", (m) => Console.WriteLine("Todo remaining building"))
                 .AddOption("See current score", (m) => Console.WriteLine("Todo curr score"))
                 .AddHeading()
-                .AddOption("Save game", (m) => Console.WriteLine("Todo save game"))
+                .AddOption("Save game", (m) => {
+                   Save();
+                })
                 .AddExitOption("Exit to main menu");
 
             menu.DisplayInteraction();

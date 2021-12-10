@@ -14,10 +14,6 @@ namespace SimpCity {
                     game.Restore();
                     game.Play();
                 })
-                .AddOption("Save game", (m) => {
-                    Game game = new Game();
-                    game.Save();
-                })
                 .AddHeading()
                 .AddExitOption("Exit");
 
