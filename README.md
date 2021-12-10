@@ -11,7 +11,6 @@ Tech Lead: Lim Wei Hao (jordie007)
 QA: Jeremy Sim (JSQJ)
 
 Developers: Caelan Ng (CaeNGnp)
-            
             Ramesh Harish (Harish110)
 
 ## Development notes
