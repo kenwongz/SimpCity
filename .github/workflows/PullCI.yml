@@ -1,4 +1,4 @@
-name: Build and Tests
+name: Pull CI for SimpCity
 
 on:  
   pull_request:
