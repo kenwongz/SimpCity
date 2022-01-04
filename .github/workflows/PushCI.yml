@@ -1,4 +1,4 @@
-name: CI for SimpCity
+name: Push CI for SimpCity
 
 on:  
   push:
