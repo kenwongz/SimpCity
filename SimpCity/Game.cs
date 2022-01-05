@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using SimpCity.buildings;
 
 namespace SimpCity {
@@ -137,17 +138,25 @@ namespace SimpCity {
 
         public void Save() {
             // TODO: US-3 - save state
+            var csv = new StringBuilder();
+            var temp = new List<string>();
             for (int y = 0; y < grid.Height; y++) {
                 //line = "";
+
                 for (int x = 0; x < grid.Width; x++) {
-                    var b = grid.Get(new CityGridPosition(x, y));
-                    using (StreamWriter csv = new StreamWriter("Grid.csv", true)) {
-                        csv.Write("");
-                        csv.WriteLine(b);
-                    }
+                    //var b = grid.Get(new CityGridPosition(x, y));
+                    //Console.WriteLine(b);
+                    var b = "b";
+                    temp.Add(b.ToString());
+                    
+                    
                 }
+                var newLine = string.Format("{0},{1},{2},{3}", temp[0], temp[1],temp[2], temp[3]);
+                csv.AppendLine(newLine);
+                temp.Clear();
+
             }
-            Console.WriteLine("");
+            File.WriteAllText("C:/Users/harir/Desktop/SEM 6/DOP/Assignment code/SimpCity/Grid.csv", csv.ToString());
             Console.Write("Game saved successfully");
         }
 
