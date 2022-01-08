@@ -95,8 +95,13 @@ namespace SimpCity {
                     var building = grid.Get(new CityGridPosition(x, y));
                     Console.Write(" | " + (building?.Info.Code ?? "   "));
                 }
-                Console.WriteLine("");
+
+                // Enclosure and line break
+                Console.WriteLine(" |");
             }
+
+            // Enclosure
+            Console.WriteLine("  " + Utils.RepeatString("+-----", grid.Width) + "+");
         }
 
         /// <summary>
