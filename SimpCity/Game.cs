@@ -121,7 +121,9 @@ namespace SimpCity {
                     pos = InputToPos(Console.ReadLine());
                     break;
                 } catch (ArgumentException ex) {
+                    Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine(ex.Message);
+                    Console.ResetColor();
                     continue;
                 }
             }
@@ -130,7 +132,9 @@ namespace SimpCity {
             try {
                 BuildAt(info, pos);
             } catch (Exception ex) {
+                Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine(ex.Message);
+                Console.ResetColor();
             }
             
         }
