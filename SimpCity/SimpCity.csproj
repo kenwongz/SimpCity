@@ -46,6 +46,8 @@
     <Compile Include="BuildingInfo.cs" />
     <Compile Include="buildings\Beach.cs" />
     <Compile Include="CityGrid.cs" />
+    <Compile Include="CityGridBuilding.cs" />
+    <Compile Include="Enums.cs" />
     <Compile Include="Game.cs" />
     <Compile Include="ConsoleMenu.cs" />
     <Compile Include="Program.cs" />
