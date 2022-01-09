@@ -6,7 +6,12 @@ using System.Threading.Tasks;
 
 namespace SimpCity {
     public enum BuildingTypes {
-        Beach
+        Beach,
+        Factory,
+        Shop
+
+
+
     }
 
     public delegate CityGridBuilding MakeNewFunc();

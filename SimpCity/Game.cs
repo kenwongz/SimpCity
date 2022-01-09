@@ -169,6 +169,16 @@ namespace SimpCity {
                         grid.Add(b, new CityGridPosition(colcount - 1, count - 1));
 
                     }
+                    if (col == "FAC") {
+                        var b = buildingInfo[BuildingTypes.Factory].MakeNew();
+                        grid.Add(b, new CityGridPosition(colcount - 1, count - 1));
+
+                    }
+                    if (col == "SHP") {
+                        var b = buildingInfo[BuildingTypes.Shop].MakeNew();
+                        grid.Add(b, new CityGridPosition(colcount - 1, count - 1));
+
+                    }
 
                 }
                 colcount = 0;
