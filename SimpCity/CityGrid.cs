@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace SimpCity {
     /// <summary>
@@ -14,12 +13,41 @@ namespace SimpCity {
             Y = y;
         }
 
+        /// <summary>
+        /// Applies an offset to this position.
+        /// </summary>
+        /// <returns>The new position.</returns>
+        public CityGridPosition Offset(CityGridOffset offset) {
+            return new CityGridPosition(X + offset.X, Y + offset.Y);
+        }
+
         public CityGridPosition Clone() {
             return new CityGridPosition(X, Y);
         }
 
         public override string ToString() {
             return string.Format("X={0}, Y={1}", X, Y);
+        }
+    }
+
+    /// <summary>
+    /// A simple abstraction of X, Y offsets
+    /// </summary>
+    public class CityGridOffset {
+        public int X { get; set; }
+        public int Y { get; set; }
+
+        public CityGridOffset(int x = 0, int y = 0) {
+            X = x;
+            Y = y;
+        }
+
+        public CityGridOffset Clone() {
+            return new CityGridOffset(X, Y);
+        }
+
+        public override string ToString() {
+            return string.Format("offsetX={0}, offsetY={1}", X, Y);
         }
     }
 
@@ -43,6 +71,17 @@ namespace SimpCity {
             itemPosition = new Dictionary<CityGridBuilding, CityGridPosition>();
             Width = width;
             Height = height;
+        }
+
+        /// <summary>
+        /// Retrieves an enumerator of orthogonally adjacent offsets.
+        /// </summary>
+        public static IEnumerable<CityGridOffset> AdjacentOffsets() {
+            for (int offY = -1; offY <= 1; offY++) {
+                for (int offX = -1; offX <= 1; offX++) {
+                    yield return new CityGridOffset(offX, offY);
+                }
+            }
         }
 
         /// <summary>
@@ -79,6 +118,7 @@ namespace SimpCity {
         /// Retrives item at the given current position.
         /// </summary>
         /// <exception cref="System.ArgumentOutOfRangeException">When the position is out of bounds</exception>
+        /// <returns>The building item at the position, <i>null</i> if it's empty.</returns>
         public CityGridBuilding Get(CityGridPosition pos) {
             if (!IsWithin(pos)) {
                 throw new System.ArgumentOutOfRangeException("Position not in grid boundary: " + pos);

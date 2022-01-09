@@ -14,7 +14,7 @@ namespace SimpCity {
         }
 
         /// <summary>
-        /// Adds the building into the specified grid  position.
+        /// Adds this building into the specified grid  position.
         /// </summary>
         /// <exception cref="System.InvalidOperationException">When the building already has a spot in the grid</exception>
         /// <exception cref="System.IndexOutOfRangeException">When the position is out of bounds</exception>
@@ -28,6 +28,14 @@ namespace SimpCity {
         /// </summary>
         public CityGridPosition Position() {
             return Grid.PositionOf(this);
+        }
+
+        /// <summary>
+        /// Retrives the building at the offset of the given current position.
+        /// </summary>
+        /// <exception cref="System.ArgumentOutOfRangeException">When the offset position is out of bounds</exception>
+        public CityGridBuilding Offset(CityGridOffset offset) {
+            return Grid.Get(Position().Offset(offset));
         }
 
         /// <summary>
