@@ -92,17 +92,5 @@ namespace SimpCity {
         public CityGridPosition PositionOf(CityGridBuilding item) {
             return itemPosition.ContainsKey(item) ? itemPosition[item].Clone() : null;
         }
-
-        // TODO: Marked for deprecation
-        // We should attempt to encapsulate implementation specifics wherever possible.
-
-        /// <summary>
-        /// Retrieves the raw grid in multidimensional array form.
-        /// </summary>
-        /// <returns></returns>
-        public CityGridBuilding[,] GetRawGrid() {
-            // TODO: does .Clone() do deep copy on both dimensions?
-            return (CityGridBuilding[,])grid.Clone();
-        }
     }
 }
