@@ -26,8 +26,25 @@ namespace SimpCity {
                         Name = Beach.Name,
                         MakeNew = () => new Beach(buildingInfo[BuildingTypes.Beach])
                     }
+                },
+                {
+                    BuildingTypes.Factory, new BuildingInfo() {
+                        Code = Factory.Code,
+                        Name = Factory.Name,
+                        MakeNew = () => new Factory(buildingInfo[BuildingTypes.Factory])
+                    }
+                },
+                {
+                    BuildingTypes.Shop, new BuildingInfo() {
+                        Code = Shop.Code,
+                        Name = Shop.Name,
+                        MakeNew = () => new Shop(buildingInfo[BuildingTypes.Shop])
+                    }
                 }
+
+
             };
+           
 
             // Automatically assign Type, CopiesLeft & Grid
             foreach (var item in buildingInfo) {
@@ -170,13 +187,13 @@ namespace SimpCity {
 
                     }
                     if (col == "FAC") {
-                        var b = buildingInfo[BuildingTypes.Factory].MakeNew();
-                        grid.Add(b, new CityGridPosition(colcount - 1, count - 1));
+                        var c = buildingInfo[BuildingTypes.Factory].MakeNew();
+                        grid.Add(c, new CityGridPosition(colcount - 1, count - 1));
 
                     }
                     if (col == "SHP") {
-                        var b = buildingInfo[BuildingTypes.Shop].MakeNew();
-                        grid.Add(b, new CityGridPosition(colcount - 1, count - 1));
+                        var d = buildingInfo[BuildingTypes.Shop].MakeNew();
+                        grid.Add(d, new CityGridPosition(colcount - 1, count - 1));
 
                     }
 
