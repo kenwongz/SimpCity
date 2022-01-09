@@ -1,6 +1,6 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using System;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SimpCity;
-using System;
 
 namespace SimpCityTests {
     /// <summary>
@@ -9,7 +9,7 @@ namespace SimpCityTests {
     [TestClass]
     public class GameTests {
         /// <summary>
-        /// QA-SN-5.1:
+        /// QA-SN-5.1, US-6:
         /// This ensures that the game can place buildings down.
         /// </summary>
         [TestMethod]
@@ -42,6 +42,49 @@ namespace SimpCityTests {
 
             // Build a beach at 0,1 again ; this should throw
             game.BuildAt(game.buildingInfo[BuildingTypes.Beach], new CityGridPosition(0, 1));
+        }
+
+        /// <summary>
+        /// QA-SN-19.1:
+        /// This ensures that the function will throw an error after the first round, when attempting
+        /// to place at a position with no adjacent buildings.
+        /// </summary>
+        [TestMethod]
+        [ExpectedException(typeof(InvalidOperationException), "Trying to place a building not adjacent to another, did not flag out..")]
+        public void BuildAt_Throws_WhenNotAdjacentAfterFirstRound() {
+            Game game = new Game();
+
+            // Build a beach at 0,1
+            game.BuildAt(game.buildingInfo[BuildingTypes.Beach], new CityGridPosition(0, 1));
+
+            // On the second round, build a beach at 2,1 which is not adjacent to the above;
+            // this should throw.
+            game.BuildAt(game.buildingInfo[BuildingTypes.Beach], new CityGridPosition(2, 1));
+        }
+
+        /// <summary>
+        /// N/A, US-9:
+        /// This ensures that the function will throw an error after the first round, when attempting
+        /// to place at a position with no adjacent buildings.
+        /// </summary>
+        [TestMethod]
+        public void BuildAt_IncrementsRoundCount_WhenCalledProperly() {
+            Game game = new Game();
+
+            // We must start with a round count of one
+            Assert.IsTrue(game.round == 1);
+
+            // Build a beach at 0,1
+            game.BuildAt(game.buildingInfo[BuildingTypes.Beach], new CityGridPosition(0, 1));
+
+            // We must now have with a round count of two
+            Assert.IsTrue(game.round == 2);
+
+            // On the second round, build a beach at 1,1
+            game.BuildAt(game.buildingInfo[BuildingTypes.Beach], new CityGridPosition(1, 1));
+
+            // We must now have with a round count of three
+            Assert.IsTrue(game.round == 3);
         }
 
         /// <summary>
