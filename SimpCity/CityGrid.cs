@@ -79,6 +79,7 @@ namespace SimpCity {
         public static IEnumerable<CityGridOffset> AdjacentOffsets() {
             for (int offY = -1; offY <= 1; offY++) {
                 for (int offX = -1; offX <= 1; offX++) {
+                    if (offX == 0 && offY == 0) continue;
                     yield return new CityGridOffset(offX, offY);
                 }
             }
@@ -95,12 +96,13 @@ namespace SimpCity {
         }
 
         /// <summary>
-        /// Adds an item into the specified grid  position.
+        /// Passively adds an item into the specified grid  position.
+        /// Throws if unsuccessful, does nothing otherwise.
         /// </summary>
         /// <exception cref="System.InvalidOperationException">When the item already has a spot in the grid</exception>
         /// <exception cref="System.IndexOutOfRangeException">When the position is out of bounds</exception>
         /// <exception cref="System.ArgumentOutOfRangeException">When the position is already occupied</exception>
-        public void Add(CityGridBuilding item, CityGridPosition pos) {
+        public void PassiveAdd(CityGridBuilding item, CityGridPosition pos) {
             if (itemPosition.ContainsKey(item)) {
                 throw new System.InvalidOperationException("Item already has a spot in the grid at: " + itemPosition[item]);
             }
@@ -109,6 +111,20 @@ namespace SimpCity {
             }
             if (grid[pos.X, pos.Y] != null) {
                 throw new System.ArgumentOutOfRangeException("The position is already occupied: " + pos);
+            }
+        }
+
+        /// <summary>
+        /// Adds an item into the specified grid  position.
+        /// </summary>
+        /// <param name="force">Whether the call to <i>PassiveAdd</i> should be skipped.</param>
+        /// <exception cref="System.InvalidOperationException">When the item already has a spot in the grid</exception>
+        /// <exception cref="System.IndexOutOfRangeException">When the position is out of bounds</exception>
+        /// <exception cref="System.ArgumentOutOfRangeException">When the position is already occupied</exception>
+        public void Add(CityGridBuilding item, CityGridPosition pos, bool force = false) {
+            if (!force) {
+                // Propagate any errors forward
+                PassiveAdd(item, pos);
             }
             grid[pos.X, pos.Y] = item;
             itemPosition[item] = pos.Clone();

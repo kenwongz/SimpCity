@@ -117,6 +117,11 @@ namespace SimpCity {
         /// <exception cref="System.IndexOutOfRangeException">When the position is out of bounds</exception>
         /// <exception cref="System.ArgumentOutOfRangeException">When the position is already occupied</exception>
         protected internal void BuildAt(BuildingInfo info, CityGridPosition pos) {
+            CityGridBuilding building = info.MakeNew();
+
+            // Propagate any errors forward. Prioritise these exceptions.
+            grid.PassiveAdd(building, pos);
+
             if (round > 1) {
                 // After the first round, check to ensure that there is at least one building in the adjacent position.
                 bool hasAdjacent = false;
@@ -132,8 +137,8 @@ namespace SimpCity {
                 } 
             }
 
-            info.MakeNew().Add(pos);
-
+            // All errors have been caught prior, let's skip the check with force = true
+            grid.Add(building, pos, true);
             round++;
         }
 

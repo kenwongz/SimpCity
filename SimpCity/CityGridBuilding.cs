@@ -14,16 +14,6 @@ namespace SimpCity {
         }
 
         /// <summary>
-        /// Adds this building into the specified grid  position.
-        /// </summary>
-        /// <exception cref="System.InvalidOperationException">When the building already has a spot in the grid</exception>
-        /// <exception cref="System.IndexOutOfRangeException">When the position is out of bounds</exception>
-        /// <exception cref="System.ArgumentOutOfRangeException">When the position is already occupied</exception>
-        public void Add(CityGridPosition pos) {
-            Grid.Add(this, pos);
-        }
-
-        /// <summary>
         /// Retrives  current position of the building in the grid.
         /// </summary>
         public CityGridPosition Position() {
