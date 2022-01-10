@@ -4,5 +4,7 @@
     /// </summary>
     public enum BuildingTypes {
         Beach,
+        Factory,
+        Shop,
     }
 }
