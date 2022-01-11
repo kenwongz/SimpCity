@@ -40,11 +40,8 @@ namespace SimpCity {
                         Name = Shop.Name,
                         MakeNew = () => new Shop(buildingInfo[BuildingTypes.Shop])
                     }
-                }
-
-
+                },
             };
-           
 
             // Automatically assign Type, CopiesLeft & Grid
             foreach (var item in buildingInfo) {
@@ -88,8 +85,6 @@ namespace SimpCity {
         /// Display an ASCII wizardry..
         /// </summary>
         protected void DisplayGrid() {
-            Console.WriteLine("Turn " + round);
-
             for (int y = 0; y < grid.Height; y++) {
 
                 // Print the horizontal heading
@@ -250,6 +245,18 @@ namespace SimpCity {
         public void Play() {
             ConsoleMenu menu = new ConsoleMenu()
                 .BeforeInteraction((m) => {
+                    if (round > MAX_ROUNDS) {
+                        // Prepare to exit the game.
+                        Console.WriteLine("Final layout of Simp City:");
+                        DisplayGrid();
+
+                        // TODO: US-8/US-10a: Display scores
+                        m.Exit();
+                        return;
+                    }
+
+                    // Display the round number
+                    Console.WriteLine("Turn " + round);
                     // Display the current grid
                     DisplayGrid();
                     // Choose random 2 buildings
