@@ -135,12 +135,16 @@ namespace SimpCity {
 
             string option = testOption;
             if (testOption == null) {
+                Console.ForegroundColor = ConsoleColor.DarkGray;
                 Console.Write("Enter your option: ");
+                Console.ResetColor();
                 option = Console.ReadLine().Trim();
             }
 
             if (!this.optionsMap.ContainsKey(option)) {
-                Console.WriteLine("Invalid option");
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Invalid option!");
+                Console.ResetColor();
                 return false;  // continue
             }
 

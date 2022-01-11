@@ -48,6 +48,8 @@
     <Compile Include="buildings\Factory.cs" />
     <Compile Include="buildings\Shop.cs" />
     <Compile Include="CityGrid.cs" />
+    <Compile Include="CityGridBuilding.cs" />
+    <Compile Include="Enums.cs" />
     <Compile Include="Game.cs" />
     <Compile Include="ConsoleMenu.cs" />
     <Compile Include="Program.cs" />
@@ -58,6 +60,7 @@
   <ItemGroup>
     <None Include=".editorconfig" />
     <None Include="App.config" />
+    <None Include="ClassDiagram.cd" />
     <None Include="Grid.csv">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
