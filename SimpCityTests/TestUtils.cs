@@ -1,4 +1,5 @@
-﻿using SimpCity;
+﻿using System.Collections.Generic;
+using SimpCity;
 
 namespace SimpCityTests {
     public class TestUtils {
@@ -29,6 +30,17 @@ namespace SimpCityTests {
                 }
             }
             return true;
+        }
+
+        /// <summary>
+        /// Utility to get the sum of all integers in the list.
+        /// </summary>
+        public static int TotalOf(List<int> intList) {
+            int total = 0;
+            foreach (int n in intList) {
+                total += n;
+            }
+            return total;
         }
     }
 }

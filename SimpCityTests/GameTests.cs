@@ -110,5 +110,37 @@ namespace SimpCityTests {
         public void InputToPos_Throws_WhenInputWrongly() {
             Game.InputToPos("You are my sunshine.");
         }
+
+        /// <summary>
+        /// N/A:
+        /// This ensures correct score calculation for Beach.
+        /// </summary>
+        [TestMethod]
+        public void CalculateScores_CalculatesCorrectly_ForBeach() {
+            Game game = new Game();
+
+            // Requirement: A Beach (BCH) scores 3 points if it is built in column A or column D,
+            // or 1 point otherwise
+
+            // Build on col A
+            game.BuildAt(game.buildingInfo[BuildingTypes.Beach], new CityGridPosition(0, 0));
+            // Ensure 3 points
+            Assert.IsTrue(TestUtils.TotalOf(game.CalculateScores()[BuildingTypes.Beach]) == 3);
+
+            // Build on col B
+            game.BuildAt(game.buildingInfo[BuildingTypes.Beach], new CityGridPosition(1, 0));
+            // Ensure 4 points
+            Assert.IsTrue(TestUtils.TotalOf(game.CalculateScores()[BuildingTypes.Beach]) == 4);
+
+            // Build on col C
+            game.BuildAt(game.buildingInfo[BuildingTypes.Beach], new CityGridPosition(2, 0));
+            // Ensure 5 points
+            Assert.IsTrue(TestUtils.TotalOf(game.CalculateScores()[BuildingTypes.Beach]) == 5);
+
+            // Build on col D
+            game.BuildAt(game.buildingInfo[BuildingTypes.Beach], new CityGridPosition(3, 0));
+            // Ensure 8 points
+            Assert.IsTrue(TestUtils.TotalOf(game.CalculateScores()[BuildingTypes.Beach]) == 8);
+        }
     }
 }

@@ -86,6 +86,16 @@ namespace SimpCity {
         }
 
         /// <summary>
+        /// Retrieves an enumerator of "next to" or <b>diagonally</b> adjacent offsets.
+        /// </summary>
+        public static IEnumerable<CityGridOffset> BesideOffsets() {
+            yield return new CityGridOffset(0, -1);
+            yield return new CityGridOffset(-1, 0);
+            yield return new CityGridOffset(1, 0);
+            yield return new CityGridOffset(0, 1);
+        }
+
+        /// <summary>
         /// Checks if the position is within boundary.
         /// </summary>
         /// <param name="pos"></param>
