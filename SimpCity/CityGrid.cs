@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace SimpCity {
     /// <summary>
@@ -14,6 +13,14 @@ namespace SimpCity {
             Y = y;
         }
 
+        /// <summary>
+        /// Applies an offset to this position.
+        /// </summary>
+        /// <returns>The new position.</returns>
+        public CityGridPosition Offset(CityGridOffset offset) {
+            return new CityGridPosition(X + offset.X, Y + offset.Y);
+        }
+
         public CityGridPosition Clone() {
             return new CityGridPosition(X, Y);
         }
@@ -24,41 +31,23 @@ namespace SimpCity {
     }
 
     /// <summary>
-    /// Represents a building in the grid.
+    /// A simple abstraction of X, Y offsets
     /// </summary>
-    public abstract class CityGridBuilding {
-        public CityGrid Grid { get; protected set; }
-        public BuildingInfo Info { get; protected set; }
+    public class CityGridOffset {
+        public int X { get; set; }
+        public int Y { get; set; }
 
-        public CityGridBuilding(BuildingInfo info) {
-            Info = info;
-            Grid = info.Grid;
+        public CityGridOffset(int x = 0, int y = 0) {
+            X = x;
+            Y = y;
         }
 
-        /// <summary>
-        /// Adds the building into the specified grid  position.
-        /// </summary>
-        /// <exception cref="System.InvalidOperationException">When the building already has a spot in the grid</exception>
-        /// <exception cref="System.IndexOutOfRangeException">When the position is out of bounds</exception>
-        /// <exception cref="System.ArgumentOutOfRangeException">When the position is already occupied</exception>
-        public void Add(CityGridPosition pos) {
-            Grid.Add(this, pos);
+        public CityGridOffset Clone() {
+            return new CityGridOffset(X, Y);
         }
 
-        /// <summary>
-        /// Retrives  current position of the building in the grid.
-        /// </summary>
-        public CityGridPosition Position() {
-            return Grid.PositionOf(this);
-        }
-
-        /// <summary>
-        /// Calculate the score to award in the current state.
-        /// </summary>
-        /// <exception cref="System.InvalidOperationException">When the building does not have a spot in the grid</exception>
-        public int CalcScore() {
-            // TODO: Sprint 2's score calculation
-            throw new NotImplementedException("CalcScore");
+        public override string ToString() {
+            return string.Format("offsetX={0}, offsetY={1}", X, Y);
         }
     }
 
@@ -85,6 +74,18 @@ namespace SimpCity {
         }
 
         /// <summary>
+        /// Retrieves an enumerator of orthogonally adjacent offsets.
+        /// </summary>
+        public static IEnumerable<CityGridOffset> AdjacentOffsets() {
+            for (int offY = -1; offY <= 1; offY++) {
+                for (int offX = -1; offX <= 1; offX++) {
+                    if (offX == 0 && offY == 0) continue;
+                    yield return new CityGridOffset(offX, offY);
+                }
+            }
+        }
+
+        /// <summary>
         /// Checks if the position is within boundary.
         /// </summary>
         /// <param name="pos"></param>
@@ -95,12 +96,13 @@ namespace SimpCity {
         }
 
         /// <summary>
-        /// Adds an item into the specified grid  position.
+        /// Passively adds an item into the specified grid  position.
+        /// Throws if unsuccessful, does nothing otherwise.
         /// </summary>
         /// <exception cref="System.InvalidOperationException">When the item already has a spot in the grid</exception>
         /// <exception cref="System.IndexOutOfRangeException">When the position is out of bounds</exception>
         /// <exception cref="System.ArgumentOutOfRangeException">When the position is already occupied</exception>
-        public void Add(CityGridBuilding item, CityGridPosition pos) {
+        public void PassiveAdd(CityGridBuilding item, CityGridPosition pos) {
             if (itemPosition.ContainsKey(item)) {
                 throw new System.InvalidOperationException("Item already has a spot in the grid at: " + itemPosition[item]);
             }
@@ -110,6 +112,20 @@ namespace SimpCity {
             if (grid[pos.X, pos.Y] != null) {
                 throw new System.ArgumentOutOfRangeException("The position is already occupied: " + pos);
             }
+        }
+
+        /// <summary>
+        /// Adds an item into the specified grid  position.
+        /// </summary>
+        /// <param name="force">Whether the call to <i>PassiveAdd</i> should be skipped.</param>
+        /// <exception cref="System.InvalidOperationException">When the item already has a spot in the grid</exception>
+        /// <exception cref="System.IndexOutOfRangeException">When the position is out of bounds</exception>
+        /// <exception cref="System.ArgumentOutOfRangeException">When the position is already occupied</exception>
+        public void Add(CityGridBuilding item, CityGridPosition pos, bool force = false) {
+            if (!force) {
+                // Propagate any errors forward
+                PassiveAdd(item, pos);
+            }
             grid[pos.X, pos.Y] = item;
             itemPosition[item] = pos.Clone();
         }
@@ -118,6 +134,7 @@ namespace SimpCity {
         /// Retrives item at the given current position.
         /// </summary>
         /// <exception cref="System.ArgumentOutOfRangeException">When the position is out of bounds</exception>
+        /// <returns>The building item at the position, <i>null</i> if it's empty.</returns>
         public CityGridBuilding Get(CityGridPosition pos) {
             if (!IsWithin(pos)) {
                 throw new System.ArgumentOutOfRangeException("Position not in grid boundary: " + pos);

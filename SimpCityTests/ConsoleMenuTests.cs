@@ -59,7 +59,7 @@ namespace SimpCityTests {
 
             // 1 means no exit
             exit = menu.AskInput("1");
-            Assert.IsTrue(exit);
+            Assert.IsFalse(exit);
 
             // 0 means exit
             exit = menu.AskInput("0");

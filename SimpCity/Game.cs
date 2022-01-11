@@ -17,7 +17,7 @@ namespace SimpCity {
 
         public Game() {
             grid = new CityGrid(GRID_WIDTH, GRID_HEIGHT);
-            round = 0;
+            round = 1;
 
             // Exhaustive list of buildings and their operations
             buildingInfo = new Dictionary<BuildingTypes, BuildingInfo>() {
@@ -27,8 +27,25 @@ namespace SimpCity {
                         Name = Beach.Name,
                         MakeNew = () => new Beach(buildingInfo[BuildingTypes.Beach])
                     }
+                },
+                {
+                    BuildingTypes.Factory, new BuildingInfo() {
+                        Code = Factory.Code,
+                        Name = Factory.Name,
+                        MakeNew = () => new Factory(buildingInfo[BuildingTypes.Factory])
+                    }
+                },
+                {
+                    BuildingTypes.Shop, new BuildingInfo() {
+                        Code = Shop.Code,
+                        Name = Shop.Name,
+                        MakeNew = () => new Shop(buildingInfo[BuildingTypes.Shop])
+                    }
                 }
+
+
             };
+           
 
             // Automatically assign Type, CopiesLeft & Grid
             foreach (var item in buildingInfo) {
@@ -96,22 +113,56 @@ namespace SimpCity {
                     var building = grid.Get(new CityGridPosition(x, y));
                     Console.Write(" | " + (building?.Info.Code ?? "   "));
                 }
-                Console.WriteLine("");
+
+                // Enclosure and line break
+                Console.WriteLine(" |");
             }
+
+            // Enclosure
+            Console.WriteLine("  " + Utils.RepeatString("+-----", grid.Width) + "+");
         }
 
         /// <summary>
         /// Builds a new building at the specified position.
+        /// Increments the round count by one.
         /// </summary>
-        /// <exception cref="System.InvalidOperationException">When the building already has a spot in the grid</exception>
+        /// <exception cref="System.InvalidOperationException">
+        /// <list type="bullet">
+        /// <item>When the building already has a spot in the grid</item>
+        /// <item>When the building is NOT placed orthogonally adjacent to another building after the first round</item>
+        /// </list>
+        /// </exception>
         /// <exception cref="System.IndexOutOfRangeException">When the position is out of bounds</exception>
         /// <exception cref="System.ArgumentOutOfRangeException">When the position is already occupied</exception>
         protected internal void BuildAt(BuildingInfo info, CityGridPosition pos) {
-            info.MakeNew().Add(pos);
+            CityGridBuilding building = info.MakeNew();
+
+            // Propagate any errors forward. Prioritise these exceptions.
+            grid.PassiveAdd(building, pos);
+
+            if (round > 1) {
+                // After the first round, check to ensure that there is at least one building in the adjacent position.
+                bool hasAdjacent = false;
+                foreach (CityGridOffset offset in CityGrid.AdjacentOffsets()) {
+                    CityGridPosition offsetPos = pos.Offset(offset);
+                    if (grid.IsWithin(offsetPos) && grid.Get(offsetPos) != null) {
+                        hasAdjacent = true;
+                        break;
+                    }
+                }
+                if (!hasAdjacent) {
+                    throw new InvalidOperationException("You must build next to an existing building.");
+                } 
+            }
+
+            // All errors have been caught prior, let's skip the check with force = true
+            grid.Add(building, pos, true);
+            round++;
         }
 
         /// <summary>
-        /// This is triggered when the player chooses "Build <X>" option in the game.
+        /// Query player for the position to build.
+        /// This is triggered when the player chooses <i>Build &lt;X></i> option in the game.
         /// </summary>
         protected void OnMakeMove(BuildingInfo info) {
             // Gather coordinate from input
@@ -122,7 +173,9 @@ namespace SimpCity {
                     pos = InputToPos(Console.ReadLine());
                     break;
                 } catch (ArgumentException ex) {
+                    Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine(ex.Message);
+                    Console.ResetColor();
                     continue;
                 }
             }
@@ -131,9 +184,11 @@ namespace SimpCity {
             try {
                 BuildAt(info, pos);
             } catch (Exception ex) {
+                Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine(ex.Message);
+                Console.ResetColor();
+                return;
             }
-            
         }
 
         public void Save() {
@@ -177,6 +232,16 @@ namespace SimpCity {
                     if (col == "BCH") {
                         var b = buildingInfo[BuildingTypes.Beach].MakeNew();
                         grid.Add(b, new CityGridPosition(colcount - 1, count - 1));
+
+                    }
+                    if (col == "FAC") {
+                        var c = buildingInfo[BuildingTypes.Factory].MakeNew();
+                        grid.Add(c, new CityGridPosition(colcount - 1, count - 1));
+
+                    }
+                    if (col == "SHP") {
+                        var d = buildingInfo[BuildingTypes.Shop].MakeNew();
+                        grid.Add(d, new CityGridPosition(colcount - 1, count - 1));
 
                     }
 
