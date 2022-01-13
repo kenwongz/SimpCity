@@ -181,6 +181,7 @@ namespace SimpCity {
         /// Builds a new building at the specified position.
         /// Increments the round count by one.
         /// </summary>
+        /// <returns>The building that was just placed.</returns>
         /// <exception cref="System.InvalidOperationException">
         /// <list type="bullet">
         /// <item>When the building already has a spot in the grid</item>
@@ -189,7 +190,7 @@ namespace SimpCity {
         /// </exception>
         /// <exception cref="System.IndexOutOfRangeException">When the position is out of bounds</exception>
         /// <exception cref="System.ArgumentOutOfRangeException">When the position is already occupied</exception>
-        protected internal void BuildAt(BuildingInfo info, CityGridPosition pos) {
+        protected internal CityGridBuilding BuildAt(BuildingInfo info, CityGridPosition pos) {
             CityGridBuilding building = info.MakeNew();
 
             // Propagate any errors forward. Prioritise these exceptions.
@@ -213,6 +214,8 @@ namespace SimpCity {
             // All errors have been caught prior, let's skip the check with force = true
             grid.Add(building, pos, true);
             round++;
+
+            return building;
         }
 
         /// <summary>
