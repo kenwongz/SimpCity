@@ -44,6 +44,13 @@ namespace SimpCity {
                     }
                 },
                 {
+                    BuildingTypes.House, new BuildingInfo() {
+                        Code = House.Code,
+                        Name = House.Name,
+                        MakeNew = () => new House(buildingInfo[BuildingTypes.House])
+                    }
+                },
+                {
                     BuildingTypes.Shop, new BuildingInfo() {
                         Code = Shop.Code,
                         Name = Shop.Name,

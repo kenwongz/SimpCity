@@ -44,6 +44,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BuildingInfo.cs" />
+    <Compile Include="buildings\House.cs" />
     <Compile Include="buildings\Beach.cs" />
     <Compile Include="buildings\Factory.cs" />
     <Compile Include="buildings\Shop.cs" />
