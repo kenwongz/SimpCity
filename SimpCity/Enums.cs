@@ -6,5 +6,7 @@
         Beach,
         Factory,
         Shop,
+        Highway,
+        House
     }
 }
