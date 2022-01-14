@@ -326,7 +326,7 @@ namespace SimpCity {
                     }
 
                     // Display the round number
-                    Console.WriteLine("Turn " + round);
+                    Console.WriteLine($"Turn {round} ({MAX_ROUNDS - round + 1} left)");
                     // Display the current grid
                     DisplayGrid();
                     // Choose random 2 buildings
