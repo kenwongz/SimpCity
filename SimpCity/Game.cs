@@ -243,6 +243,7 @@ namespace SimpCity {
             Console.Write("Game saved successfully");
         }
 
+
         /// <summary>
         /// Loads the grid data from file into the grid data structure.
         /// </summary>
@@ -272,10 +273,29 @@ namespace SimpCity {
                         grid.Add(d, new CityGridPosition(colcount - 1, count - 1));
 
                     }
+                    if (col == "HWY") {
+                        var d = buildingInfo[BuildingTypes.Highway].MakeNew();
+                        grid.Add(d, new CityGridPosition(colcount - 1, count - 1));
+
+                    }
+                    if (col == "MON") {
+                        var d = buildingInfo[BuildingTypes.Monument].MakeNew();
+                        grid.Add(d, new CityGridPosition(colcount - 1, count - 1));
+
+                    }
+                    if (col == "PRK") {
+                        var d = buildingInfo[BuildingTypes.Park].MakeNew();
+                        grid.Add(d, new CityGridPosition(colcount - 1, count - 1));
+
+                    }
+                    if (col == "HSE") {
+                        var d = buildingInfo[BuildingTypes.House].MakeNew();
+                        grid.Add(d, new CityGridPosition(colcount - 1, count - 1));
+
+                    }
 
                 }
                 colcount = 0;
-                //Do something
 
             }
 
