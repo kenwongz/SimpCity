@@ -1,5 +1,5 @@
 # Workflow based off https://timheuer.com/blog/building-net-framework-apps-using-github-actions/#defining-the-.net-framework-build-steps
-name: SimpCity
+name: Build and Publish
 
 # Trigger this CD on push
 on:
