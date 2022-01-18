@@ -4,7 +4,7 @@ name: SimpCity
 # Trigger this CD on push
 on:
   push:
-    branches: [ main ]
+    branches: [ main, cd-patch-1 ]
  
 jobs:
   build:
