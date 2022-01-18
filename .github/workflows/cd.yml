@@ -38,8 +38,9 @@ jobs:
         uses: softprops/action-gh-release@v1
         if: "!startsWith(github.ref, 'refs/tags/')"
         with:
-          tag_name: dev
-          release_name: Release dev
+          tag_name: dev-${{ github.sha }}
+          name: Release dev-${{ github.sha }}
+          target_commitish: ${{ github.sha }}
           body: |
             ${{ github.sha }}
           draft: false
@@ -52,7 +53,7 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ github.ref_name }}
-          release_name: Release ${{ github.ref_name }}
+          name: Release ${{ github.ref_name }}
           draft: false
           prerelease: false
           files: |
