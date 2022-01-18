@@ -8,27 +8,25 @@ on:
  
 jobs:
   build:
- 
     runs-on: windows-latest
  
     steps:
-    - uses: actions/checkout@v1
-      name: Checkout Code
+    - uses: actions/checkout@v2
      
     - name: Setup MSBuild Path
-      uses: warrenbuckley/Setup-MSBuild@v1
+      uses: microsoft/setup-msbuild@v1
        
     - name: Setup NuGet
-      uses: NuGet/setup-nuget@v1.0.2
+      uses: NuGet/setup-nuget@v1.0.5
      
-    - name: SimpCity.sln
-      run: nuget restore SimpleFrameworkApp.sln
+    - name: Restore Packages
+      run: nuget restore SimpCity.sln
  
-    - name: Build and Publish Web App
+    - name: Build and Publish Artifact
       run: msbuild SimpCity.sln /p:Configuration=Release /p:DeployOnBuild=true /p:PublishProfile=FolderProfile
  
     - name: Upload Artifact
       uses: actions/upload-artifact@v1.0.0
       with:
         name: SimpCity-Artifact
-        path: bin\Release\Publish
+        path: SimpCity\bin\Release\Publish
