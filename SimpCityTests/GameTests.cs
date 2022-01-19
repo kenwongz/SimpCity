@@ -1,22 +1,20 @@
 ﻿using System;
+using System.IO;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SimpCity;
 
-namespace SimpCityTests
-{
+namespace SimpCityTests {
     /// <summary>
     /// Tests the gameplay
     /// </summary>
     [TestClass]
-    public class GameTests
-    {
+    public class GameTests {
         /// <summary>
         /// QA-SN-5, US-6:
         /// This ensures that the game can place buildings down.
         /// </summary>
         [TestMethod]
-        public void BuildAt_PlacesBuilding_WhenCalledProperly()
-        {
+        public void BuildAt_PlacesBuilding_WhenCalledProperly() {
             Game game = new Game();
 
             // Build a beach at 0,1
@@ -37,8 +35,7 @@ namespace SimpCityTests
         /// </summary>
         [TestMethod]
         [ExpectedException(typeof(ArgumentOutOfRangeException), "Trying to place a building on an existing one did not flag out..")]
-        public void BuildAt_Throws_WhenBuildingExists()
-        {
+        public void BuildAt_Throws_WhenBuildingExists() {
             Game game = new Game();
 
             // Build a beach at 0,1
@@ -95,8 +92,7 @@ namespace SimpCityTests
         /// This ensures that a position input is correctly mapped.
         /// </summary>
         [TestMethod]
-        public void InputToPos_ReturnsCorrectly_WhenInputProperly()
-        {
+        public void InputToPos_ReturnsCorrectly_WhenInputProperly() {
             // Check at 0,0
             CityGridPosition pos = Game.InputToPos("A1");
             Assert.IsTrue(pos.X == 0 && pos.Y == 0);
@@ -112,8 +108,7 @@ namespace SimpCityTests
         /// </summary>
         [TestMethod]
         [ExpectedException(typeof(ArgumentException), "Trying to supply an invalid coordinate format did not flag out..")]
-        public void InputToPos_Throws_WhenInputWrongly()
-        {
+        public void InputToPos_Throws_WhenInputWrongly() {
             Game.InputToPos("You are my sunshine.");
         }
 
@@ -121,17 +116,14 @@ namespace SimpCityTests
         // Check if files get read properly
         // Default output will be BCH at 2,2
         [TestMethod]
-        public void Fileread()
-        {
+        public void Fileread() {
             int count = 0;
             int colcount = 0;
-            foreach (var line in File.ReadLines("Grid.csv"))
-            {
+            foreach (var line in File.ReadLines("Grid.csv")) {
                 count += 1;
                 string rowlist = line.ToString();
                 string[] row = rowlist.Split(',');
-                foreach (var column in row)
-                {
+                foreach (var column in row) {
                     colcount += 1;
                     string col = column.ToString();
 
