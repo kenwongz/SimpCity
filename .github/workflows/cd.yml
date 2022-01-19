@@ -4,7 +4,7 @@ name: Build and Publish
 # Trigger this CD on push
 on:
   push:
-    branches: [ main, cd-patch-1 ]
+    branches: [ 'v*' ]
   # Allows running this workflow manually from the Actions tab, useful for Developers who may want
   # to view test status on the production end, prior to main branch merge.
   workflow_dispatch:
