@@ -7,5 +7,8 @@
         Factory,
         House,
         Shop,
+        Highway,
+        Park,
+        Monument
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using SimpCity.buildings;
 
 namespace SimpCity {
@@ -44,11 +45,11 @@ namespace SimpCity {
                     }
                 },
                 {
-                    BuildingTypes.House, new BuildingInfo() {
-                        Code = House.Code,
-                        Name = House.Name,
-                        MakeNew = () => new House(buildingInfo[BuildingTypes.House])
-                    }
+                   BuildingTypes.House, new BuildingInfo() {
+                       Code = House.Code,
+                       Name = House.Name,
+                       MakeNew = () => new House(buildingInfo[BuildingTypes.House])
+                   }
                 },
                 {
                     BuildingTypes.Shop, new BuildingInfo() {
@@ -57,6 +58,28 @@ namespace SimpCity {
                         MakeNew = () => new Shop(buildingInfo[BuildingTypes.Shop])
                     }
                 },
+                {
+                   BuildingTypes.Highway, new BuildingInfo() {
+                       Code = Highway.Code,
+                       Name = Highway.Name,
+                       MakeNew = () => new Highway(buildingInfo[BuildingTypes.Highway])
+                   }
+                },
+                {
+                   BuildingTypes.Park, new BuildingInfo() {
+                       Code = Park.Code,
+                       Name = Park.Name,
+                       MakeNew = () => new Park(buildingInfo[BuildingTypes.Park])
+                   }
+                },
+                {
+                   BuildingTypes.Monument, new BuildingInfo() {
+                       Code = Monument.Code,
+                       Name = Monument.Name,
+                       MakeNew = () => new Monument(buildingInfo[BuildingTypes.Monument])
+                   }
+                }
+
             };
 
             // Automatically assign Type, CopiesLeft & Grid
@@ -258,18 +281,28 @@ namespace SimpCity {
 
         public void Save() {
             // TODO: US-3 - save state
-            CityGridBuilding[,] rawGrid = grid.GetRawGrid();
-
+            var csv = new StringBuilder();
+            var temp = new List<string>();
             for (int y = 0; y < grid.Height; y++) {
                 //line = "";
+
                 for (int x = 0; x < grid.Width; x++) {
-                    var b = grid.Get(new CityGridPosition(x, y));
-                    //if (b is null) { "x"} else if (b is Beach) { "BCH"}
-                    //line += "," + ;
+                    //var b = grid.Get(new CityGridPosition(x, y));
+                    //Console.WriteLine(b);
+                    var b = "b";
+                    temp.Add(b.ToString());
+                    
+                    
                 }
-                Console.WriteLine("");
+                var newLine = string.Format("{0},{1},{2},{3}", temp[0], temp[1],temp[2], temp[3]);
+                csv.AppendLine(newLine);
+                temp.Clear();
+
             }
+            File.WriteAllText("Grid.csv", csv.ToString());
+            Console.Write("Game saved successfully");
         }
+
 
         /// <summary>
         /// Loads the grid data from file into the grid data structure.
@@ -300,17 +333,27 @@ namespace SimpCity {
                         grid.Add(d, new CityGridPosition(colcount - 1, count - 1));
 
                     }
+                    if (col == "HWY") {
+                        var d = buildingInfo[BuildingTypes.Highway].MakeNew();
+                        grid.Add(d, new CityGridPosition(colcount - 1, count - 1));
+
+                    }
+                    if (col == "MON") {
+                        var d = buildingInfo[BuildingTypes.Monument].MakeNew();
+                        grid.Add(d, new CityGridPosition(colcount - 1, count - 1));
+
+                    }
+                    if (col == "PRK") {
+                        var d = buildingInfo[BuildingTypes.Park].MakeNew();
+                        grid.Add(d, new CityGridPosition(colcount - 1, count - 1));
+
+                    }
 
                 }
                 colcount = 0;
-                //Do something
 
             }
 
-
-            // TODO: US-5 - restore state
-            // grid = filesaver.load()
-            // test
         }
 
         public void Play() {
@@ -346,7 +389,9 @@ namespace SimpCity {
                 .AddOption("See remaining buildings", (m) => Console.WriteLine("Todo remaining building"))
                 .AddOption("See current score", (m) => Console.WriteLine("Todo curr score"))
                 .AddHeading()
-                .AddOption("Save game", (m) => Console.WriteLine("Todo save game"))
+                .AddOption("Save game", (m) => {
+                   Save();
+                })
                 .AddExitOption("Exit to main menu");
 
             menu.DisplayInteraction();

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SimpCity;
 
@@ -109,6 +110,28 @@ namespace SimpCityTests {
         [ExpectedException(typeof(ArgumentException), "Trying to supply an invalid coordinate format did not flag out..")]
         public void InputToPos_Throws_WhenInputWrongly() {
             Game.InputToPos("You are my sunshine.");
+        }
+
+
+        // Check if files get read properly
+        // Default output will be BCH at 2,2
+        [TestMethod]
+        public void Fileread() {
+            int count = 0;
+            int colcount = 0;
+            foreach (var line in File.ReadLines("Grid.csv")) {
+                count += 1;
+                string rowlist = line.ToString();
+                string[] row = rowlist.Split(',');
+                foreach (var column in row) {
+                    colcount += 1;
+                    string col = column.ToString();
+
+                }
+                colcount = 0;
+                Console.WriteLine(line);
+            }
+
         }
     }
 }
