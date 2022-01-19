@@ -111,6 +111,7 @@ namespace SimpCity {
             return this;
         }
 
+        /// <summary>
         /// For interactive display, this signals the console menu to return after the command
         /// callback is completed.
         /// </summary>
@@ -131,6 +132,10 @@ namespace SimpCity {
         /// <param name="testOption">Uses this as the input string instead of stdin, for tests purposes.</param>
         public bool AskInput(string testOption = null) {
             this.customAction?.Invoke(this);
+            if (this.exitNext) {
+                // Exit after this if signalled by custom action
+                return this.exitNext;
+            }
             this.Display();
 
             string option = testOption;

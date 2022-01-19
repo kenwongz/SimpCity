@@ -54,6 +54,7 @@
     <Compile Include="GameTests.cs" />
     <Compile Include="CityGridTests.cs" />
     <Compile Include="TestUtils.cs" />
+    <Compile Include="CityGridBuildingTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />

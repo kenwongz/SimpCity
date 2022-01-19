@@ -1,13 +1,12 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
+﻿using System;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SimpCity;
-
 
 namespace SimpCityTests {
     [TestClass]
     public class ConsoleMenuTests {
         /// <summary>
-        /// QA-SN-1.1:
+        /// QA-SN-1:
         /// This ensures that the game will blockingly run.
         /// </summary>
         [TestMethod]
@@ -26,7 +25,7 @@ namespace SimpCityTests {
         }
 
         /// <summary>
-        /// QA-SN-1.2:
+        /// QA-SN-1:
         /// This ensures that the game will display the grid before the menu.
         /// </summary>
         [TestMethod]
@@ -46,7 +45,7 @@ namespace SimpCityTests {
         }
 
         /// <summary>
-        /// QA-SN-2.1, QA-SN-9.1:
+        /// QA-SN-2, QA-SN-9:
         /// This ensures that the game will exit when requested.
         /// </summary>
         [TestMethod]
@@ -67,7 +66,31 @@ namespace SimpCityTests {
         }
 
         /// <summary>
-        /// QA-SN-3.1, QA-SN-10.1:
+        /// N/A, US-10:
+        /// This ensures that the game will exit when requested at <i>BeforeInteraction</i>.
+        /// </summary>
+        [TestMethod]
+        public void AskInput_Exits_WhenRequestedAtBeforeInteraction() {
+            bool wasExecuted = false;
+            ConsoleMenu menu = new ConsoleMenu()
+                .BeforeInteraction((m) => {
+                    // Request to exit, option callback MUST NOT execute
+                    m.Exit();
+                })
+                .AddOption("This is an option", (m) => {
+                    wasExecuted = true;
+                });
+
+            // Normally this would return false but we have requested to exit in BeforeInteraction.
+            bool exit = menu.AskInput("1");
+            Assert.IsTrue(exit);
+
+            // Another check is to ensure that the option callback did not execute.
+            Assert.IsFalse(wasExecuted);
+        }
+
+        /// <summary>
+        /// QA-SN-3, QA-SN-10, QA-SN-11:
         /// This ensures that the function will not break and resumes regular operation when an
         /// invalid option is supplied.
         /// </summary>

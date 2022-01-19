@@ -31,10 +31,6 @@ namespace SimpCity {
         /// <summary>
         /// Calculate the score to award in the current state.
         /// </summary>
-        /// <exception cref="System.InvalidOperationException">When the building does not have a spot in the grid</exception>
-        public int CalcScore() {
-            // TODO: Sprint 2's score calculation
-            throw new NotImplementedException("CalcScore");
-        }
+        public abstract int CalcScore(ScoreCalculationArchive archive);
     }
 }

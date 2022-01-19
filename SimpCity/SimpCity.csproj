@@ -44,6 +44,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BuildingInfo.cs" />
+    <Compile Include="buildings\House.cs" />
     <Compile Include="buildings\Beach.cs" />
     <Compile Include="buildings\Factory.cs" />
     <Compile Include="buildings\Highway.cs" />
@@ -58,6 +59,7 @@
     <Compile Include="ConsoleMenu.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ScoreCalculationArchive.cs" />
     <Compile Include="ScRandom.cs" />
     <Compile Include="Utils.cs" />
   </ItemGroup>

@@ -1,0 +1,34 @@
+# Workflow based off https://timheuer.com/blog/building-net-framework-apps-using-github-actions/#defining-the-.net-framework-build-steps
+name: SimpCity
+
+# Trigger this CD on push
+on:
+  push:
+    branches: [ main ]
+ 
+jobs:
+  build:
+ 
+    runs-on: windows-latest
+ 
+    steps:
+    - uses: actions/checkout@v1
+      name: Checkout Code
+     
+    - name: Setup MSBuild Path
+      uses: warrenbuckley/Setup-MSBuild@v1
+       
+    - name: Setup NuGet
+      uses: NuGet/setup-nuget@v1.0.2
+     
+    - name: SimpCity.sln
+      run: nuget restore SimpleFrameworkApp.sln
+ 
+    - name: Build and Publish Web App
+      run: msbuild SimpCity.sln /p:Configuration=Release /p:DeployOnBuild=true /p:PublishProfile=FolderProfile
+ 
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v1.0.0
+      with:
+        name: SimpCity-Artifact
+        path: bin\Release\Publish

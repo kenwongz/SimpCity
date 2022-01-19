@@ -5,19 +5,28 @@ using System.Text;
 using SimpCity.buildings;
 
 namespace SimpCity {
+    public class GameOptions {
+        /// <summary>
+        /// Disables the rule for adjacent placement of new buildings.
+        /// </summary>
+        public bool DisableAdjacentRule { get; set; } = false;
+    }
+
     public class Game {
         private const int GRID_WIDTH = 4;
         private const int GRID_HEIGHT = 4;
         private const int MAX_ROUNDS = GRID_WIDTH * GRID_HEIGHT;
         private const int BUILDING_COPIES = 8;
 
+        protected internal readonly GameOptions options;
         protected internal readonly IDictionary<BuildingTypes, BuildingInfo> buildingInfo;
         protected internal readonly CityGrid grid;
         protected internal int round;
 
-        public Game() {
+        public Game(GameOptions options = null) {
             grid = new CityGrid(GRID_WIDTH, GRID_HEIGHT);
             round = 1;
+            this.options = options;
 
             // Exhaustive list of buildings and their operations
             buildingInfo = new Dictionary<BuildingTypes, BuildingInfo>() {
@@ -33,6 +42,13 @@ namespace SimpCity {
                         Code = Factory.Code,
                         Name = Factory.Name,
                         MakeNew = () => new Factory(buildingInfo[BuildingTypes.Factory])
+                    }
+                },
+                {
+                    BuildingTypes.House, new BuildingInfo() {
+                        Code = House.Code,
+                        Name = House.Name,
+                        MakeNew = () => new House(buildingInfo[BuildingTypes.House])
                     }
                 },
                 {
@@ -66,7 +82,6 @@ namespace SimpCity {
 
 
             };
-           
 
             // Automatically assign Type, CopiesLeft & Grid
             foreach (var item in buildingInfo) {
@@ -110,8 +125,6 @@ namespace SimpCity {
         /// Display an ASCII wizardry..
         /// </summary>
         protected void DisplayGrid() {
-            Console.WriteLine("Turn " + round);
-
             for (int y = 0; y < grid.Height; y++) {
 
                 // Print the horizontal heading
@@ -144,9 +157,62 @@ namespace SimpCity {
         }
 
         /// <summary>
+        /// Calculates scores per building and building type.
+        /// </summary>
+        protected internal Dictionary<BuildingTypes, List<int>> CalculateScores() {
+            // Create an empty map for the scores
+            var buildingScores = new Dictionary<BuildingTypes, List<int>>();
+            foreach (var entry in buildingInfo) {
+                buildingScores[entry.Value.Type] = new List<int>();
+            }
+
+            // Calculate and archive
+            ScoreCalculationArchive calcArchive = new ScoreCalculationArchive();
+            for (int y = 0; y < grid.Height; y++) {
+                for (int x = 0; x < grid.Width; x++) {
+                    try {
+                        CityGridBuilding b = grid.Get(new CityGridPosition(x, y));
+                        buildingScores[b.Info.Type].Add(b.CalcScore(calcArchive));
+                        calcArchive.calculated(b);
+                    } catch (Exception ex) {
+                        // TODO: Temporary catching while US-8 is in progress.
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine(ex.Message);
+                        Console.ResetColor();
+                    }
+                }
+            }
+
+            return buildingScores;
+        }
+
+        /// <summary>
+        /// Displays the current score.
+        /// </summary>
+        protected void DisplayScores() {
+            // Score display
+            int totalScore = 0;
+            foreach (var entry in CalculateScores()) {
+                string formattedFormula = string.Join(" + ", entry.Value);
+                int score = 0;
+                foreach (int s in entry.Value) {
+                    score += s;
+                }
+                totalScore += score;
+
+                // Display per-type calculation
+                Console.WriteLine($"{buildingInfo[entry.Key].Code}: {formattedFormula}{(entry.Value.Count <= 0 ? "" : " = ")}{score}");
+            }
+
+            // Display the total score
+            Console.WriteLine($"Total score: {totalScore}");
+        }
+
+        /// <summary>
         /// Builds a new building at the specified position.
         /// Increments the round count by one.
         /// </summary>
+        /// <returns>The building that was just placed.</returns>
         /// <exception cref="System.InvalidOperationException">
         /// <list type="bullet">
         /// <item>When the building already has a spot in the grid</item>
@@ -155,13 +221,13 @@ namespace SimpCity {
         /// </exception>
         /// <exception cref="System.IndexOutOfRangeException">When the position is out of bounds</exception>
         /// <exception cref="System.ArgumentOutOfRangeException">When the position is already occupied</exception>
-        protected internal void BuildAt(BuildingInfo info, CityGridPosition pos) {
+        protected internal CityGridBuilding BuildAt(BuildingInfo info, CityGridPosition pos) {
             CityGridBuilding building = info.MakeNew();
 
             // Propagate any errors forward. Prioritise these exceptions.
             grid.PassiveAdd(building, pos);
 
-            if (round > 1) {
+            if (round > 1 && !(options?.DisableAdjacentRule ?? false)) {
                 // After the first round, check to ensure that there is at least one building in the adjacent position.
                 bool hasAdjacent = false;
                 foreach (CityGridOffset offset in CityGrid.AdjacentOffsets()) {
@@ -179,6 +245,8 @@ namespace SimpCity {
             // All errors have been caught prior, let's skip the check with force = true
             grid.Add(building, pos, true);
             round++;
+
+            return building;
         }
 
         /// <summary>
@@ -297,6 +365,17 @@ namespace SimpCity {
         public void Play() {
             ConsoleMenu menu = new ConsoleMenu()
                 .BeforeInteraction((m) => {
+                    if (round > MAX_ROUNDS) {
+                        // Prepare to exit the game.
+                        Console.WriteLine("Final layout of Simp City:");
+                        DisplayGrid();
+                        DisplayScores();
+                        m.Exit();
+                        return;
+                    }
+
+                    // Display the round number
+                    Console.WriteLine($"Turn {round} ({MAX_ROUNDS - round + 1} left)");
                     // Display the current grid
                     DisplayGrid();
                     // Choose random 2 buildings
