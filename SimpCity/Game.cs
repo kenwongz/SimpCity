@@ -71,6 +71,13 @@ namespace SimpCity {
                        Name = Monument.Name,
                        MakeNew = () => new Monument(buildingInfo[BuildingTypes.Monument])
                    }
+                },
+                {
+                   BuildingTypes.House, new BuildingInfo() {
+                       Code = House.Code,
+                       Name = House.Name,
+                       MakeNew = () => new House(buildingInfo[BuildingTypes.House])
+                   }
                 }
 
 
