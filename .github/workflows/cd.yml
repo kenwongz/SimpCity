@@ -1,34 +1,62 @@
 # Workflow based off https://timheuer.com/blog/building-net-framework-apps-using-github-actions/#defining-the-.net-framework-build-steps
-name: SimpCity
+name: Build and Publish
 
 # Trigger this CD on push
 on:
   push:
-    branches: [ main ]
- 
+    # Sequence of patterns matched against refs/tags
+    tags:
+      - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
+  # Allows running this workflow manually from the Actions tab, useful for Developers who may want
+  # to view test status on the production end, prior to main branch merge.
+  workflow_dispatch:
+
 jobs:
   build:
- 
     runs-on: windows-latest
- 
+
     steps:
-    - uses: actions/checkout@v1
-      name: Checkout Code
-     
-    - name: Setup MSBuild Path
-      uses: warrenbuckley/Setup-MSBuild@v1
-       
-    - name: Setup NuGet
-      uses: NuGet/setup-nuget@v1.0.2
-     
-    - name: SimpCity.sln
-      run: nuget restore SimpleFrameworkApp.sln
- 
-    - name: Build and Publish Web App
-      run: msbuild SimpCity.sln /p:Configuration=Release /p:DeployOnBuild=true /p:PublishProfile=FolderProfile
- 
-    - name: Upload Artifact
-      uses: actions/upload-artifact@v1.0.0
-      with:
-        name: SimpCity-Artifact
-        path: bin\Release\Publish
+      - uses: actions/checkout@v2
+
+      - name: Setup MSBuild Path
+        uses: microsoft/setup-msbuild@v1
+
+      - name: Setup NuGet
+        uses: NuGet/setup-nuget@v1.0.5
+
+      - name: Restore Packages
+        run: nuget restore SimpCity.sln
+
+      - name: Build and Publish Artifact
+        run: msbuild SimpCity.sln /p:Configuration=Release /p:DeployOnBuild=true /p:PublishProfile=FolderProfile
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v1.0.0
+        with:
+          name: SimpCity-Artifact
+          path: SimpCity\bin\Release
+
+      - name: Create Dev Release
+        uses: softprops/action-gh-release@v1
+        if: "!startsWith(github.ref, 'refs/tags/')"
+        with:
+          tag_name: dev-${{ github.sha }}
+          name: Release dev-${{ github.sha }}
+          target_commitish: ${{ github.sha }}
+          body: |
+            ${{ github.sha }}
+          draft: false
+          prerelease: true
+          files: |
+            SimpCity\bin\Release\SimpCity.exe
+
+      - name: Create Prod Release
+        if: "startsWith(github.ref, 'refs/tags/')"
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: Release ${{ github.ref_name }}
+          draft: false
+          prerelease: false
+          files: |
+            SimpCity\bin\Release\SimpCity.exe
