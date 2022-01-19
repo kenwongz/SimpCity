@@ -8,7 +8,6 @@
         House,
         Shop,
         Highway,
-        House,
         Park,
         Monument
     }

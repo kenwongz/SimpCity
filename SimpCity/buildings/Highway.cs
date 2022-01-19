@@ -6,5 +6,9 @@
         /// </summary>
         public static string Code { get; } = "HWY";
         public Highway(BuildingInfo info) : base(info) { }
+        public override int CalcScore(ScoreCalculationArchive archive) {
+            // TODO: US-8
+            throw new System.NotImplementedException();
+        }
     }
 }

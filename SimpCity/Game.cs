@@ -45,13 +45,6 @@ namespace SimpCity {
                     }
                 },
                 {
-                    BuildingTypes.House, new BuildingInfo() {
-                        Code = House.Code,
-                        Name = House.Name,
-                        MakeNew = () => new House(buildingInfo[BuildingTypes.House])
-                    }
-                },
-                {
                     BuildingTypes.Shop, new BuildingInfo() {
                         Code = Shop.Code,
                         Name = Shop.Name,
@@ -346,11 +339,6 @@ namespace SimpCity {
                     }
                     if (col == "PRK") {
                         var d = buildingInfo[BuildingTypes.Park].MakeNew();
-                        grid.Add(d, new CityGridPosition(colcount - 1, count - 1));
-
-                    }
-                    if (col == "HSE") {
-                        var d = buildingInfo[BuildingTypes.House].MakeNew();
                         grid.Add(d, new CityGridPosition(colcount - 1, count - 1));
 
                     }
