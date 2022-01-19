@@ -48,7 +48,6 @@
     <Compile Include="buildings\Beach.cs" />
     <Compile Include="buildings\Factory.cs" />
     <Compile Include="buildings\Highway.cs" />
-    <Compile Include="buildings\House.cs" />
     <Compile Include="buildings\Monument.cs" />
     <Compile Include="buildings\Park.cs" />
     <Compile Include="buildings\Shop.cs" />
