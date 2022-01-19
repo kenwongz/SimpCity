@@ -4,7 +4,9 @@ name: Build and Publish
 # Trigger this CD on push
 on:
   push:
-    branches: [ 'v*' ]
+    # Sequence of patterns matched against refs/tags
+    tags:
+      - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
   # Allows running this workflow manually from the Actions tab, useful for Developers who may want
   # to view test status on the production end, prior to main branch merge.
   workflow_dispatch:
