@@ -50,13 +50,6 @@ namespace SimpCity {
                    }
                 },
                 {
-                   BuildingTypes.House, new BuildingInfo() {
-                       Code = House.Code,
-                       Name = House.Name,
-                       MakeNew = () => new House(buildingInfo[BuildingTypes.House])
-                   }
-                },
-                {
                    BuildingTypes.Park, new BuildingInfo() {
                        Code = Park.Code,
                        Name = Park.Name,
@@ -239,7 +232,7 @@ namespace SimpCity {
                 temp.Clear();
 
             }
-            File.WriteAllText("C:/Users/harir/Desktop/SEM 6/DOP/Assignment code/SimpCity/Grid.csv", csv.ToString());
+            File.WriteAllText("Grid.csv", csv.ToString());
             Console.Write("Game saved successfully");
         }
 
