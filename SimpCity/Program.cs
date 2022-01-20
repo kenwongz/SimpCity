@@ -8,8 +8,9 @@ namespace SimpCity {
             string informationVersion = assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion;
 
             bool isDebugMode = false;
-            Game makeGameFunc() => new Game(new GameOptions {
-                DisableAdjacentRule = isDebugMode,
+            Game makeGameFunc() => new Game(!isDebugMode ? null : new GameOptions {
+                DisableAdjacentRule = true,
+                AllowAllBuildingTypes = true,
             });
 
             ConsoleMenu menu = new ConsoleMenu()

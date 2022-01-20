@@ -4,10 +4,15 @@ using System.Collections.Generic;
 namespace SimpCity {
     public class ConsoleMenuOption {
         public string Label { get; set; }
+        /// <summary>
+        /// The description of the option.
+        /// If this is <i>null</i>, it can hide the option from displaying.
+        /// </summary>
         public string Description { get; set; }
         public Action<ConsoleMenu> Callback { get; set; }
 
-        public ConsoleMenuOption(string label, string description, Action<ConsoleMenu> callback = null) {
+        /// <param name="description">If this is <i>null</i>, it can hide the option from displaying.</param>
+        public ConsoleMenuOption(string label, string description = null, Action<ConsoleMenu> callback = null) {
             this.Label = label;
             this.Description = description;
             this.Callback = callback;
@@ -15,9 +20,13 @@ namespace SimpCity {
     }
 
     public class ConsoleMenuHeading {
+        /// <summary>
+        /// The description of the heading.
+        /// If this is <i>null</i>, it can act as a single line padding.
+        /// </summary>
         public string Description { get; set; }
 
-        /// <param name="description">If this is `null`, it can act as a single line padding.</param>
+        /// <param name="description">If this is <i>null</i>, it can act as a single line padding.</param>
         public ConsoleMenuHeading(string description = null) {
             this.Description = description;
         }
@@ -49,7 +58,10 @@ namespace SimpCity {
         protected string GetMenuText() {
             string buf = "";
             for (int i = 0; i < this.options.Count; i++) {
-                buf += this.options[i].Label + ") " + this.options[i].Description + "\n";
+                string description = this.options[i].Description;
+                if (description != null) {
+                    buf += this.options[i].Label + ") " + description + "\n";
+                }
                 
                 // Display a header after this option
                 if (this.headings.ContainsKey(i)) {
@@ -63,6 +75,7 @@ namespace SimpCity {
             return buf;
         }
 
+        /// <param name="description">If this is <i>null</i>, it can hide the option from displaying.</param>
         public ConsoleMenu AddOption(string description, Action<ConsoleMenu> callback = null, string customLabel = null) {
             if (customLabel == null) {
                 this.optionsIndex++;
@@ -93,6 +106,7 @@ namespace SimpCity {
         /// <summary>
         /// Edit an option added by AddOption
         /// </summary>
+        /// <param name="description">If this is <i>null</i>, it can hide the option from displaying.</param>
         /// <exception cref="System.InvalidOperationException">When the label does not exist in the options</exception>
         public ConsoleMenu EditOption(string label, string description, Action<ConsoleMenu> callback = null) {
             if (!this.optionsMap.ContainsKey(label)) {
@@ -155,7 +169,7 @@ namespace SimpCity {
 
             ConsoleMenuOption consoleOpt = this.optionsMap[option];
             // Print the option the user picked
-            Console.WriteLine("Option " + option + ". " + consoleOpt.Description);
+            Console.WriteLine("Option " + option + ". " + consoleOpt.Description ?? "");
             Console.WriteLine(new string('-', 26));
 
             // Run the action
