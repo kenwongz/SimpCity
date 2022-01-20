@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SimpCity {
+    [ExcludeFromCodeCoverage]
     public class ConsoleMenuOption {
         public string Label { get; set; }
         /// <summary>
@@ -19,6 +21,7 @@ namespace SimpCity {
         }
     }
 
+    [ExcludeFromCodeCoverage]
     public class ConsoleMenuHeading {
         /// <summary>
         /// The description of the heading.

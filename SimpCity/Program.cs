@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 
 namespace SimpCity {
+    [ExcludeFromCodeCoverage]
     class Program {
         static void Main(string[] args) {
             Assembly assembly = Assembly.GetExecutingAssembly();
