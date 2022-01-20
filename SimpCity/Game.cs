@@ -279,30 +279,27 @@ namespace SimpCity {
             }
         }
 
+        /// <summary>
+        /// Saves the grid data structure into the file.
+        /// </summary>
         public void Save() {
-            // TODO: US-3 - save state
-            var csv = new StringBuilder();
-            var temp = new List<string>();
+            StringBuilder csvBuilder = new StringBuilder();
             for (int y = 0; y < grid.Height; y++) {
-                //line = "";
-
+                List<string> rowBuildings = new List<string>();
                 for (int x = 0; x < grid.Width; x++) {
-                    //var b = grid.Get(new CityGridPosition(x, y));
-                    //Console.WriteLine(b);
-                    var b = "b";
-                    temp.Add(b.ToString());
-                    
-                    
+                    var b = grid.Get(new CityGridPosition(x, y));
+                    rowBuildings.Add(b?.Info.Code ?? "x");
                 }
-                var newLine = string.Format("{0},{1},{2},{3}", temp[0], temp[1],temp[2], temp[3]);
-                csv.AppendLine(newLine);
-                temp.Clear();
-
+                csvBuilder.AppendLine(string.Join(",", rowBuildings));
             }
-            File.WriteAllText("Grid.csv", csv.ToString());
-            Console.Write("Game saved successfully");
-        }
 
+            // Open the file stream with append = false
+            StreamWriter csvStream = new StreamWriter("Grid.csv", false);
+            csvStream.WriteLine(csvBuilder.ToString());
+            csvStream.Close();
+
+            Console.WriteLine("Game saved successfully");
+        }
 
         /// <summary>
         /// Loads the grid data from file into the grid data structure.

@@ -67,7 +67,7 @@
     <None Include="App.config" />
     <None Include="ClassDiagram.cd" />
     <None Include="Grid.csv">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
