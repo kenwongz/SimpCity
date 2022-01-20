@@ -307,8 +307,19 @@ namespace SimpCity {
         public void Restore() {
             int count = 0;
             int colcount = 0;
-            IEnumerable<string> glist = File.ReadLines("Grid.csv");
-            foreach (var line in File.ReadLines("Grid.csv")) {
+
+            // Read the file lines into memory.
+            // Stream is automatically closed at the end of the scope.
+            List<string> glist = new List<string>();
+            using (StreamReader csvReader = new StreamReader("Grid.csv")) {
+                var line = csvReader.ReadLine();
+                while (line != null) {
+                    glist.Add(line);
+                    line = csvReader.ReadLine();
+                }
+            }
+
+            foreach (var line in glist) {
                 count += 1;
                 string rowlist = line.ToString();
                 string[] row = rowlist.Split(',');
@@ -350,6 +361,7 @@ namespace SimpCity {
                 colcount = 0;
 
             }
+
 
         }
 
