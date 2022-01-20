@@ -362,7 +362,6 @@ namespace SimpCity {
 
             }
 
-
         }
 
         public void Play() {
