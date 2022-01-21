@@ -348,6 +348,11 @@ namespace SimpCity {
                         grid.Add(d, new CityGridPosition(colcount - 1, count - 1));
 
                     }
+                    if (col == "HSE") {
+                        var b = buildingInfo[BuildingTypes.House].MakeNew();
+                        grid.Add(b, new CityGridPosition(colcount - 1, count - 1));
+
+                    }
 
                 }
                 colcount = 0;
