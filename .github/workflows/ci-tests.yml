@@ -37,3 +37,6 @@ jobs:
         with:
           name: SimpCity Test Results
           path: SimpCityTests\TestResults
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v2.1.0
