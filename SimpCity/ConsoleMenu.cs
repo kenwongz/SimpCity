@@ -165,8 +165,10 @@ namespace SimpCity {
 
             if (!this.optionsMap.ContainsKey(option)) {
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("Invalid option!");
+                Console.Write("Invalid option!");
                 Console.ResetColor();
+                // Do not allow buffers after content to be colored
+                Console.WriteLine();
                 return false;  // continue
             }
 

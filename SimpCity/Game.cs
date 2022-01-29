@@ -180,9 +180,8 @@ namespace SimpCity {
                         calcArchive.calculated(b);
                     } catch (Exception ex) {
                         // TODO: Temporary catching while US-8 is in progress.
-                        Console.ForegroundColor = ConsoleColor.Red;
-                        Console.WriteLine(ex.Message);
-                        Console.ResetColor();
+                        Utils.WriteLineColored(ex.Message,
+                            foreground: ConsoleColor.Red);
                     }
                 }
             }
@@ -266,9 +265,8 @@ namespace SimpCity {
                     pos = InputToPos(Console.ReadLine());
                     break;
                 } catch (ArgumentException ex) {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine(ex.Message);
-                    Console.ResetColor();
+                    Utils.WriteLineColored(ex.Message,
+                        foreground: ConsoleColor.Red);
                     continue;
                 }
             }
@@ -277,9 +275,8 @@ namespace SimpCity {
             try {
                 BuildAt(info, pos);
             } catch (Exception ex) {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine(ex.Message);
-                Console.ResetColor();
+                Utils.WriteLineColored(ex.Message,
+                    foreground: ConsoleColor.Red);
                 return;
             }
         }

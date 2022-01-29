@@ -17,17 +17,15 @@ namespace SimpCity {
 
             ConsoleMenu menu = new ConsoleMenu()
                 .BeforeInteraction((m) => {
-                    Console.ForegroundColor = ConsoleColor.Black;
-                    Console.BackgroundColor = ConsoleColor.Green;
-                    Console.WriteLine($"   SimpCity v{informationVersion}   ");
-                    Console.ResetColor();
+                    Utils.WriteLineColored($"   SimpCity v{informationVersion}   ",
+                        foreground: ConsoleColor.Black,
+                        background: ConsoleColor.Green);
 
                     // Notify if the session is in debug
                     if (isDebugMode) {
-                        Console.ForegroundColor = ConsoleColor.Black;
-                        Console.BackgroundColor = ConsoleColor.Red;
-                        Console.WriteLine($"   (Debug mode)   ");
-                        Console.ResetColor();
+                        Utils.WriteLineColored($"   (Debug mode)   ",
+                            foreground: ConsoleColor.Black,
+                            background: ConsoleColor.Red);
                     }
 
                     Console.WriteLine("Welcome, mayor of Simp City!\n" + new string('=', 28));
