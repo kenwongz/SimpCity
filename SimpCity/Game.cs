@@ -10,6 +10,11 @@ namespace SimpCity {
         /// Disables the rule for adjacent placement of new buildings.
         /// </summary>
         public bool DisableAdjacentRule { get; set; } = false;
+        /// <summary>
+        /// Allows all available building types to be chosen
+        /// If <i>false</i>, goes back to the default behavior of randomizing 2 building types.
+        /// </summary>
+        public bool AllowAllBuildingTypes { get; set; } = false;
     }
 
     public class Game {
@@ -175,9 +180,8 @@ namespace SimpCity {
                         calcArchive.calculated(b);
                     } catch (Exception ex) {
                         // TODO: Temporary catching while US-8 is in progress.
-                        Console.ForegroundColor = ConsoleColor.Red;
-                        Console.WriteLine(ex.Message);
-                        Console.ResetColor();
+                        Utils.WriteLineColored(ex.Message,
+                            foreground: ConsoleColor.Red);
                     }
                 }
             }
@@ -238,7 +242,7 @@ namespace SimpCity {
                 }
                 if (!hasAdjacent) {
                     throw new InvalidOperationException("You must build next to an existing building.");
-                } 
+                }
             }
 
             // All errors have been caught prior, let's skip the check with force = true
@@ -261,9 +265,8 @@ namespace SimpCity {
                     pos = InputToPos(Console.ReadLine());
                     break;
                 } catch (ArgumentException ex) {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine(ex.Message);
-                    Console.ResetColor();
+                    Utils.WriteLineColored(ex.Message,
+                        foreground: ConsoleColor.Red);
                     continue;
                 }
             }
@@ -272,9 +275,8 @@ namespace SimpCity {
             try {
                 BuildAt(info, pos);
             } catch (Exception ex) {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine(ex.Message);
-                Console.ResetColor();
+                Utils.WriteLineColored(ex.Message,
+                    foreground: ConsoleColor.Red);
                 return;
             }
         }
@@ -385,25 +387,45 @@ namespace SimpCity {
                     Console.WriteLine($"Turn {round} ({MAX_ROUNDS - round + 1} left)");
                     // Display the current grid
                     DisplayGrid();
-                    // Choose random 2 buildings
-                    for (int i = 1; i < 3; i++) {
-                        BuildingTypes chosen = RandomBuildingType();
-                        // Replace the menu option
-                        m.EditOption(
-                            i.ToString(), string.Format("Build a {0}", buildingInfo[chosen].Code),
-                            // Create a new building object and make the move
-                            (_) => OnMakeMove(buildingInfo[chosen])
-                        );
+
+                    if (options?.AllowAllBuildingTypes ?? false) {
+                        // Replace all placeholders with the all the building types
+                        int loopCount = 0;
+                        foreach (var item in buildingInfo) {
+                            loopCount++;
+                            m.EditOption(
+                                loopCount.ToString(), string.Format("Build a {0}", item.Value.Code),
+                                // Trigger the make-move event
+                                (_) => OnMakeMove(item.Value)
+                            );
+                        }
+                    } else {
+                        // Choose random 2 buildings
+                        for (int i = 1; i < 3; i++) {
+                            BuildingTypes chosen = RandomBuildingType();
+                            // Replace the menu option
+                            m.EditOption(
+                                i.ToString(), string.Format("Build a {0}", buildingInfo[chosen].Code),
+                                // Trigger the make-move event
+                                (_) => OnMakeMove(buildingInfo[chosen])
+                            );
+                        }
                     }
-                })
-                // These two placeholders will be edited accordingly before each interaction
-                .AddOption("Placeholder 1")
-                .AddOption("Placeholder 2")
-                .AddOption("See remaining buildings", (m) => Console.WriteLine("Todo remaining building"))
+                });
+
+            // Counts the number of times a placeholder should be made on the menu
+            int placeholderCount = (options?.AllowAllBuildingTypes ?? false) ? buildingInfo.Count : 2;
+            for (int i = 0; i < placeholderCount; i++) {
+                // Stub placeholder, its description does not really matter
+                menu.AddOption(null);
+            }
+
+            // Add in the remaining options
+            menu.AddOption("See remaining buildings", (m) => Console.WriteLine("Todo remaining building"))
                 .AddOption("See current score", (m) => Console.WriteLine("Todo curr score"))
                 .AddHeading()
                 .AddOption("Save game", (m) => {
-                   Save();
+                    Save();
                 })
                 .AddExitOption("Exit to main menu");
 
