@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
+using System.Text.Json;
 
 namespace SimpCity {
     /// <summary>
@@ -21,11 +23,30 @@ namespace SimpCity {
         public DateTime Time { get; set; }
     }
 
+    public class JsonLeaderboard {
+        /// <summary>
+        /// The leaderboard's grid width.
+        /// </summary>
+        public int GridWidth { get; set; }
+        /// <summary>
+        /// The leaderboard's grid height.
+        /// </summary>
+        public int GridHeight { get; set; }
+        /// <summary>
+        /// A sorted list of scores.
+        /// </summary>
+        public List<LeaderboardScore> lb { get; set; }
+    }
 
     /// <summary>
     /// Represents a SimpCity leaderboard for a certain grid dimension.
     /// </summary>
     public class Leaderboard {
+        /// <summary>
+        /// The main internal data structure of the leaderboard.
+        /// </summary>
+        private readonly SortedDictionary<int, List<LeaderboardScore>> lb;
+
         /// <summary>
         /// The global leaderboard hosting this leaderboard.
         /// </summary>
@@ -47,31 +68,91 @@ namespace SimpCity {
             GridWidth = gridWidth;
             GridHeight = gridHeight;
 
+            // Initialize an empty sorted dict
+            lb = new SortedDictionary<int, List<LeaderboardScore>>();
         }
 
+        /// <summary>
+        /// Construct a leaderboard from JSON leaderboard.
+        /// </summary>
+        public Leaderboard(GlobalLeaderboard globalLb, JsonLeaderboard jsonLb) {
+            GlobalLeaderboard = globalLb;
+            GridWidth = jsonLb.GridWidth;
+            GridHeight = jsonLb.GridHeight;
+
+            // Create sorted dictionary for quicker search
+            lb = new SortedDictionary<int, List<LeaderboardScore>>();
+
+            // Unload into memory
+            foreach (LeaderboardScore score in jsonLb.lb) {
+                addLbScore(score);
+            }
+        }
+
+        /// <summary>
+        /// Adds a score into the sorted dict.
+        /// </summary>
+        private void addLbScore(LeaderboardScore score) {
+            List<LeaderboardScore> scoreList;
+
+            if (!lb.ContainsKey(score.Score)) {
+                scoreList = new List<LeaderboardScore>();
+                lb.Add(score.Score, scoreList);
+            } else {
+                scoreList = lb[score.Score];
+            }
+
+            // Lower priority; Add to the back
+            scoreList.Add(score);
+        }
 
         /// <summary>
         /// Adds a score into the leaderboard, and saves the change.
         /// </summary>
         public void AddScore(LeaderboardScore score) {
-            throw new NotImplementedException();
+            addLbScore(score);
+            GlobalLeaderboard.Save();
         }
 
         /// <summary>
         /// Retrieves the flattened (sorted) list of scores on the leaderboard.
         /// </summary>
-        /// <returns></returns>
         public List<LeaderboardScore> FlattenScores() {
-            throw new NotImplementedException();
+            // Convert sorted dict back into its raw, flattened form
+            List<LeaderboardScore> flatLb = new List<LeaderboardScore>();
+            foreach (var kv in lb) {
+                foreach (LeaderboardScore score in kv.Value) {
+                    flatLb.Add(score);
+                }
+            }
+            return flatLb;
         }
 
+        /// <summary>
+        /// Converts leaderboard into JSON structure for saving.
+        /// </summary>
+        public JsonLeaderboard ToJsonLeaderboard() {
+            return new JsonLeaderboard {
+                GridWidth = GridWidth,
+                GridHeight = GridHeight,
+                lb = FlattenScores()
+            };
+        }
     }
 
+    public class JsonGlobalLeaderboard {
+        public List<JsonLeaderboard> Leaderboards { get; set; }
+    }
 
     /// <summary>
     /// Represents the SimpCity global leaderboard.
     /// </summary>
     public class GlobalLeaderboard {
+        /// <summary>
+        /// Internal dictionary of loaded leaderboards of defined grid dimensions (serialized string with <i>slugLeaderboardKey</i>).
+        /// </summary>
+        private readonly Dictionary<string, Leaderboard> leaderboards;
+
         /// <summary>
         /// File path to use for the global leaderboard persistent data.
         /// </summary>
@@ -89,23 +170,55 @@ namespace SimpCity {
         /// If <i>null</i>, it can be used to disable file saving.
         /// </param>
         public GlobalLeaderboard(string filePath) {
-
+            leaderboards = new Dictionary<string, Leaderboard>();
+            FilePath = filePath;
+            Load();
         }
 
+        private static string slugLeaderboardKey(int gridWidth, int gridHeight) {
+            return $"lb_{gridWidth}_{gridHeight}";
+        }
 
         /// <summary>
         /// Loads global leaderboard data from a JSON string.
         /// </summary>
+        /// <exception cref="System.ArgumentNullException">json is null.</exception>
+        /// <exception cref="System.Text.Json.JsonException">
+        /// The JSON is invalid. -or- TValue is not compatible with the JSON. -or- There
+        /// is remaining data in the string beyond a single JSON value.
+        /// </exception>
         protected internal void LoadJsonString(string jsonString) {
-            throw new NotImplementedException();
+            List<JsonLeaderboard> jsonLbs = JsonSerializer.Deserialize<JsonGlobalLeaderboard>(jsonString).Leaderboards;
+
+            // Load JSON leaderboard into memory
+            foreach (JsonLeaderboard jsonLb in jsonLbs) {
+                string key = slugLeaderboardKey(jsonLb.GridWidth, jsonLb.GridHeight);
+                Leaderboard lb = new Leaderboard(this, jsonLb);
+                // Override ref
+                leaderboards[key] = lb;
+            }
         }
 
         /// <summary>
         /// Loads data from the file.
         /// </summary>
+        /// <exception cref="System.ArgumentNullException">json is null.</exception>
+        /// <exception cref="System.Text.Json.JsonException">
+        /// The JSON is invalid. -or- TValue is not compatible with the JSON. -or- There
+        /// is remaining data in the string beyond a single JSON value.
+        /// </exception>
         [ExcludeFromCodeCoverage]
         public void Load() {
-            throw new NotImplementedException();
+            // No-op
+            if (!IsFileSaving) return;
+
+            string jsonString;
+            // Stream is automatically closed at the end of the scope.
+            using (StreamReader csvReader = new StreamReader(FilePath)) {
+                jsonString = csvReader.ReadToEnd();
+            }
+
+            LoadJsonString(jsonString);
         }
 
         /// <summary>
@@ -113,12 +226,26 @@ namespace SimpCity {
         /// </summary>
         /// <returns></returns>
         protected internal string ToJsonString() {
-            throw new NotImplementedException();
+            // Convert to JSON leaderboard
+            List<JsonLeaderboard> jsonLbs = new List<JsonLeaderboard>();
+            foreach (Leaderboard lb in leaderboards.Values) {
+                jsonLbs.Add(lb.ToJsonLeaderboard());
+            }
+
+            return JsonSerializer.Serialize(new JsonGlobalLeaderboard {
+                Leaderboards = jsonLbs
+            }, new JsonSerializerOptions { WriteIndented = true });
         }
 
         [ExcludeFromCodeCoverage]
         public void Save() {
-            throw new NotImplementedException();
+            // No-op
+            if (!IsFileSaving) return;
+
+            // Stream is automatically closed at the end of the scope.
+            using (StreamWriter fileStream = new StreamWriter(FilePath, false)) {
+                fileStream.Write(ToJsonString());
+            }
         }
 
 
@@ -126,7 +253,18 @@ namespace SimpCity {
         /// Retrives the leaderboard for specified grid dimensions
         /// </summary>
         public Leaderboard GetLeaderboard(int gridWidth, int gridHeight) {
-            throw new NotImplementedException();
+            string key = slugLeaderboardKey(gridWidth, gridHeight);
+
+            Leaderboard lb;
+            if (!leaderboards.ContainsKey(key)) {
+                lb = new Leaderboard(this, gridWidth, gridHeight);
+                // Add ref
+                leaderboards.Add(key, lb);
+            } else {
+                lb = leaderboards[key];
+            }
+
+            return lb;
         }
     }
 }
