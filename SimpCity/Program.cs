@@ -4,13 +4,25 @@ using System.Reflection;
 
 namespace SimpCity {
     [ExcludeFromCodeCoverage]
+    class ProgramSettings {
+        public bool IsDebugMode { get; set; } = false;
+        public int GridWidth { get; set; } = 4;
+        public int GridHeight { get; set; } = 4;
+    }
+
+    [ExcludeFromCodeCoverage]
     class Program {
         static void Main(string[] args) {
             Assembly assembly = Assembly.GetExecutingAssembly();
             string informationVersion = assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion;
 
-            bool isDebugMode = false;
-            Game makeGameFunc() => new Game(!isDebugMode ? null : new GameOptions {
+            // Create data folder
+
+            ProgramSettings pSettings = new ProgramSettings();
+            GlobalLeaderboard glb = new GlobalLeaderboard(DataPaths.LeaderboardFile);
+
+            // Helper anonymous function to create game
+            Game makeGameFunc() => new(!pSettings.IsDebugMode ? null : new GameOptions {
                 DisableAdjacentRule = true,
                 AllowAllBuildingTypes = true,
             });
@@ -22,7 +34,7 @@ namespace SimpCity {
                         background: ConsoleColor.Green);
 
                     // Notify if the session is in debug
-                    if (isDebugMode) {
+                    if (pSettings.IsDebugMode) {
                         Utils.WriteLineColored($"   (Debug mode)   ",
                             foreground: ConsoleColor.Black,
                             background: ConsoleColor.Red);
@@ -39,11 +51,15 @@ namespace SimpCity {
                     game.Restore();
                     game.Play();
                 })
+                .AddOption("Show high scores", (m) => {
+                    Leaderboard lb = glb.GetLeaderboard(pSettings.GridWidth, pSettings.GridHeight);
+                    lb.Display();
+                })
                 .AddHeading()
                 .AddOption("Toggle debug mode", (m) => {
-                    isDebugMode = !isDebugMode;
+                    pSettings.IsDebugMode = !pSettings.IsDebugMode;
                     Console.Write("Debug mode is now: ");
-                    if (isDebugMode) {
+                    if (pSettings.IsDebugMode) {
                         Console.ForegroundColor = ConsoleColor.Black;
                         Console.BackgroundColor = ConsoleColor.Green;
                         Console.Write("on");

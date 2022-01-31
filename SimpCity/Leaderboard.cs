@@ -138,6 +138,28 @@ namespace SimpCity {
                 lb = FlattenScores()
             };
         }
+
+        /// <summary>
+        /// Displays the leaderboard on the console.
+        /// </summary>
+        [ExcludeFromCodeCoverage]
+        public void Display() {
+            // Composite formatting with alignment
+            string rowAlignment = "{0,3} {1,-6} {2,20}";
+
+            // Header
+            Console.WriteLine($"{new string('-', 9)} HIGH SCORES {new string('-', 9)}");
+            Console.WriteLine(string.Format(rowAlignment, "Pos", "Player", "Score"));
+
+            var scores = FlattenScores();
+            for (int i = 0; i < scores.Count; i++) {
+                LeaderboardScore score = scores[i];
+                Console.WriteLine(string.Format(rowAlignment, $"{i}.", score.PlayerName, score.Score));
+            }
+
+            // Enclosure
+            Console.WriteLine(new string('-', 31));
+        }
     }
 
     public class JsonGlobalLeaderboard {
@@ -211,11 +233,13 @@ namespace SimpCity {
         public void Load() {
             // No-op
             if (!IsFileSaving) return;
+            // Nothing to load if file doesn't exist
+            if (!File.Exists(FilePath)) return;
 
             string jsonString;
             // Stream is automatically closed at the end of the scope.
-            using (StreamReader csvReader = new StreamReader(FilePath)) {
-                jsonString = csvReader.ReadToEnd();
+            using (StreamReader fileStream = new StreamReader(FilePath)) {
+                jsonString = fileStream.ReadToEnd();
             }
 
             LoadJsonString(jsonString);
@@ -224,7 +248,6 @@ namespace SimpCity {
         /// <summary>
         /// Converts global leaderboard into JSON string for saving.
         /// </summary>
-        /// <returns></returns>
         protected internal string ToJsonString() {
             // Convert to JSON leaderboard
             List<JsonLeaderboard> jsonLbs = new List<JsonLeaderboard>();
@@ -237,6 +260,9 @@ namespace SimpCity {
             }, new JsonSerializerOptions { WriteIndented = true });
         }
 
+        /// <summary>
+        /// Saves data into the file.
+        /// </summary>
         [ExcludeFromCodeCoverage]
         public void Save() {
             // No-op
@@ -247,7 +273,6 @@ namespace SimpCity {
                 fileStream.Write(ToJsonString());
             }
         }
-
 
         /// <summary>
         /// Retrives the leaderboard for specified grid dimensions
