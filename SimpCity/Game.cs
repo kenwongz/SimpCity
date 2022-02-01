@@ -35,6 +35,7 @@ namespace SimpCity {
         protected internal readonly IDictionary<BuildingTypes, BuildingInfo> buildingInfo;
         protected internal readonly CityGrid grid;
         protected internal int round;
+        protected internal BuildingTypes[] currentBuildingPool;
 
         /// <summary>
         /// The max number of rounds that can be played in the game.
@@ -68,6 +69,8 @@ namespace SimpCity {
 
             grid = new CityGrid(options.GridWidth, options.GridHeight);
             round = 1;
+
+            RefreshCurrentBuildingPool();
 
             // Exhaustive list of buildings and their operations
             buildingInfo = new Dictionary<BuildingTypes, BuildingInfo>() {
@@ -162,8 +165,16 @@ namespace SimpCity {
         }
 
         /// <summary>
+        /// Refreshes the current building pool.
+        /// </summary>
+        protected internal void RefreshCurrentBuildingPool() {
+            currentBuildingPool = new BuildingTypes[2] { RandomBuildingType(), RandomBuildingType() };
+        }
+
+        /// <summary>
         /// Display an ASCII wizardry..
         /// </summary>
+        [ExcludeFromCodeCoverage]
         protected void DisplayGrid() {
             for (int y = 0; y < grid.Height; y++) {
 
@@ -315,6 +326,9 @@ namespace SimpCity {
                     foreground: ConsoleColor.Red);
                 return;
             }
+
+            // Randomize the building pool again.
+            RefreshCurrentBuildingPool();
         }
 
         /// <summary>
@@ -440,9 +454,9 @@ namespace SimpCity {
                             );
                         }
                     } else {
-                        // Choose random 2 buildings
+                        // Show the current building pool
                         for (int i = 1; i < 3; i++) {
-                            var chosen = RandomBuildingType();
+                            var chosen = currentBuildingPool[i - 1];
                             // Replace the menu option
                             m.EditOption(
                                 i.ToString(), string.Format("Build a {0}", buildingInfo[chosen].Code),
