@@ -6,7 +6,6 @@ namespace SimpCityTests {
     [TestClass]
     public class ConsoleMenuTests {
         /// <summary>
-        /// QA-SN-1:
         /// This ensures that the game will blockingly run.
         /// </summary>
         [TestMethod]
@@ -25,7 +24,6 @@ namespace SimpCityTests {
         }
 
         /// <summary>
-        /// QA-SN-1:
         /// This ensures that the game will display the grid before the menu.
         /// </summary>
         [TestMethod]
@@ -45,7 +43,6 @@ namespace SimpCityTests {
         }
 
         /// <summary>
-        /// QA-SN-2, QA-SN-9:
         /// This ensures that the game will exit when requested.
         /// </summary>
         [TestMethod]
@@ -66,7 +63,6 @@ namespace SimpCityTests {
         }
 
         /// <summary>
-        /// N/A, US-10:
         /// This ensures that the game will exit when requested at <i>BeforeInteraction</i>.
         /// </summary>
         [TestMethod]
@@ -90,7 +86,6 @@ namespace SimpCityTests {
         }
 
         /// <summary>
-        /// QA-SN-3, QA-SN-10, QA-SN-11:
         /// This ensures that the function will not break and resumes regular operation when an
         /// invalid option is supplied.
         /// </summary>
@@ -114,7 +109,6 @@ namespace SimpCityTests {
         }
 
         /// <summary>
-        /// N/A:
         /// This ensures that the function throws when trying to edit a non-existent label.
         /// </summary>
         [TestMethod]
