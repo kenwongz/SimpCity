@@ -68,7 +68,8 @@ namespace SimpCity {
             System.IO.Directory.CreateDirectory(DataPaths.DataFolder);
 
             ProgramSettings pSettings = new ProgramSettings();
-            GlobalLeaderboard glb = new GlobalLeaderboard(DataPaths.LeaderboardFile);
+            GlobalLeaderboard actualGlb = new GlobalLeaderboard(DataPaths.LeaderboardFile);
+            GlobalLeaderboard glb = actualGlb;
 
             // Helper anonymous function to create game
             Game makeGameFunc() => new(new GameOptions {
@@ -117,11 +118,17 @@ namespace SimpCity {
                         Console.BackgroundColor = ConsoleColor.Green;
                         Console.Write("on");
                         Console.ResetColor();
+
+                        // Set glb to an arbitrary one with no file saving involved
+                        glb = new GlobalLeaderboard(null);
                     } else {
                         Console.ForegroundColor = ConsoleColor.White;
                         Console.BackgroundColor = ConsoleColor.Red;
                         Console.Write("off");
                         Console.ResetColor();
+
+                        // Set glb back to the actual
+                        glb = actualGlb;
                     }
                     Console.WriteLine();
                 })
