@@ -210,7 +210,7 @@ namespace SimpCity {
             var scores = FlattenScores();
             for (int i = 0; i < scores.Count; i++) {
                 LeaderboardScore score = scores[i];
-                Console.WriteLine(string.Format(rowAlignment, $"{i}.", score.PlayerName, score.Score));
+                Console.WriteLine(string.Format(rowAlignment, $"{i + 1}.", score.PlayerName, score.Score));
             }
 
             // Enclosure
