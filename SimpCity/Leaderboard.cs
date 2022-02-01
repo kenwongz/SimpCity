@@ -185,11 +185,12 @@ namespace SimpCity {
         [ExcludeFromCodeCoverage]
         public void Display() {
             // Composite formatting with alignment
-            string rowAlignment = "{0,3} {1,-6} {2,20}";
+            string rowAlignment = "{0,3} {1,-19} {2,7}";
 
             // Header
             Console.WriteLine($"{new string('-', 9)} HIGH SCORES {new string('-', 9)}");
             Console.WriteLine(string.Format(rowAlignment, "Pos", "Player", "Score"));
+            Console.WriteLine(string.Format(rowAlignment, "---", "------", "-----"));
 
             var scores = FlattenScores();
             for (int i = 0; i < scores.Count; i++) {

@@ -40,7 +40,7 @@ namespace SimpCity {
             string name;
             do {
                 Console.ForegroundColor = ConsoleColor.DarkGray;
-                Console.Write("Please enter your name (max 20 chars):");
+                Console.Write("Please enter your name (max 20 chars): ");
                 Console.ResetColor();
 
                 name = Console.ReadLine().Trim();
@@ -49,7 +49,6 @@ namespace SimpCity {
                         foreground: ConsoleColor.Red);
                     continue;
                 }
-
             } while (false);
 
             lb.AddScore(new LeaderboardScore {
