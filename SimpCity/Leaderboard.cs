@@ -160,7 +160,7 @@ namespace SimpCity {
         public List<LeaderboardScore> FlattenScores() {
             // Convert sorted dict back into its raw, flattened form
             List<LeaderboardScore> flatLb = new List<LeaderboardScore>();
-            foreach (var kv in lb) {
+            foreach (var kv in lb.Reverse()) {
                 foreach (LeaderboardScore score in kv.Value) {
                     flatLb.Add(score);
                 }
