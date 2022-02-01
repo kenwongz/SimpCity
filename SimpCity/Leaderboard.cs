@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.Linq;
 using System.Text.Json;
 
 namespace SimpCity {
@@ -33,9 +34,9 @@ namespace SimpCity {
         /// </summary>
         public int GridHeight { get; set; }
         /// <summary>
-        /// A sorted list of scores.
+        /// A sorted list of score records.
         /// </summary>
-        public List<LeaderboardScore> lb { get; set; }
+        public List<LeaderboardScore> Records { get; set; }
     }
 
     /// <summary>
@@ -59,6 +60,10 @@ namespace SimpCity {
         /// The leaderboard's grid height.
         /// </summary>
         public int GridHeight { get; set; }
+        /// <summary>
+        /// The total count of score records in the leaderboard (cached).
+        /// </summary>
+        public int TotalScoresCount { get; set; }
 
         /// <summary>
         /// Construct a new leaderboard from specified grid dimensions.
@@ -70,6 +75,7 @@ namespace SimpCity {
 
             // Initialize an empty sorted dict
             lb = new SortedDictionary<int, List<LeaderboardScore>>();
+            TotalScoresCount = 0;
         }
 
         /// <summary>
@@ -82,9 +88,10 @@ namespace SimpCity {
 
             // Create sorted dictionary for quicker search
             lb = new SortedDictionary<int, List<LeaderboardScore>>();
+            TotalScoresCount = 0;
 
             // Unload into memory
-            foreach (LeaderboardScore score in jsonLb.lb) {
+            foreach (LeaderboardScore score in jsonLb.Records) {
                 addLbScore(score);
             }
         }
@@ -104,14 +111,47 @@ namespace SimpCity {
 
             // Lower priority; Add to the back
             scoreList.Add(score);
+            TotalScoresCount++;
         }
 
         /// <summary>
-        /// Adds a score into the leaderboard, and saves the change.
+        /// Adds a score into the leaderboard, if eligible, and saves the change.
         /// </summary>
-        public void AddScore(LeaderboardScore score) {
+        /// <param name="force">Whether the check to <i>ScorePointPosition</i> should be skipped.</param>
+        public void AddScore(LeaderboardScore score, bool force = false) {
+            if (!force && ScorePointPosition(score.Score) == 0) return;
             addLbScore(score);
             GlobalLeaderboard.Save();
+        }
+
+        /// <summary>
+        /// Retrieves the position of the score on the leaderboard. The position returned starts counting from 1.
+        /// </summary>
+        /// <returns>The projected position on the leaderboard. <i>0</i> if not eligible.</returns>
+        public uint ScorePointPosition(int scorePoint) {
+            // Empty leaderboard.
+            if (lb.Count == 0) return 1;
+
+            // LINQ should hopefully allow us to retrieve min and max within O(log n) time..
+            // See https://github.com/dotnet/runtime/issues/22912
+
+            uint currPos = 1;
+            // Traverse in reverse, starting from the highest score.
+            foreach (var kv in lb.Reverse()) {
+                if (scorePoint > kv.Key) {
+                    // Highest position
+                    return currPos;
+                }
+
+                // Skip pos to the end of the list
+                currPos += (uint)kv.Value.Count;
+                if (scorePoint == kv.Key) {
+                    return currPos;
+                }
+            }
+
+            // Not eligible
+            return currPos;
         }
 
         /// <summary>
@@ -135,7 +175,7 @@ namespace SimpCity {
             return new JsonLeaderboard {
                 GridWidth = GridWidth,
                 GridHeight = GridHeight,
-                lb = FlattenScores()
+                Records = FlattenScores()
             };
         }
 

@@ -12,19 +12,71 @@ namespace SimpCity {
 
     [ExcludeFromCodeCoverage]
     class Program {
+        /// <summary>
+        /// Checks the score for leaderboard eligibility. If eligible, prompts for player's name to add
+        /// to the leaderboard.
+        /// </summary>
+        /// <param name="game">The game that was just completed.</param>
+        /// <param name="glb">The global leaderboard to add to.</param>
+        static void DoLeaderboardEligibility(Game game, GlobalLeaderboard glb) {
+            if (!game.HasEnded) return;
+
+            int totalScore = 0;
+            foreach (var entry in game.CalculateScores()) {
+                int score = 0;
+                foreach (int s in entry.Value) {
+                    score += s;
+                }
+                totalScore += score;
+            }
+
+            Leaderboard lb = glb.GetLeaderboard(game.GridWidth, game.GridHeight);
+            uint lbPosition = lb.ScorePointPosition(totalScore);
+            if (lbPosition == 0) return;
+
+            Console.WriteLine();
+            Console.WriteLine($"Congratulations! You made the high score board at position {lbPosition}!");
+
+            string name;
+            do {
+                Console.ForegroundColor = ConsoleColor.DarkGray;
+                Console.Write("Please enter your name (max 20 chars):");
+                Console.ResetColor();
+
+                name = Console.ReadLine().Trim();
+                if (name.Length > 20) {
+                    Utils.WriteLineColored($"Your name exceeds the limit by {name.Length - 20} chars!",
+                        foreground: ConsoleColor.Red);
+                    continue;
+                }
+
+            } while (false);
+
+            lb.AddScore(new LeaderboardScore {
+                PlayerName = name,
+                Score = totalScore,
+                Time = DateTime.UtcNow
+            });
+
+            lb.Display();
+        }
+
         static void Main(string[] args) {
             Assembly assembly = Assembly.GetExecutingAssembly();
             string informationVersion = assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion;
 
             // Create data folder
+            System.IO.Directory.CreateDirectory(DataPaths.DataFolder);
 
             ProgramSettings pSettings = new ProgramSettings();
             GlobalLeaderboard glb = new GlobalLeaderboard(DataPaths.LeaderboardFile);
 
             // Helper anonymous function to create game
-            Game makeGameFunc() => new(!pSettings.IsDebugMode ? null : new GameOptions {
-                DisableAdjacentRule = true,
-                AllowAllBuildingTypes = true,
+            Game makeGameFunc() => new(new GameOptions {
+                DisableAdjacentRule = pSettings.IsDebugMode,
+                AllowAllBuildingTypes = pSettings.IsDebugMode,
+                GridWidth = pSettings.GridWidth,
+                GridHeight = pSettings.GridHeight
             });
 
             ConsoleMenu menu = new ConsoleMenu()
@@ -45,11 +97,13 @@ namespace SimpCity {
                 .AddOption("Start new game", (m) => {
                     Game game = makeGameFunc();
                     game.Play();
+                    DoLeaderboardEligibility(game, glb);
                 })
                 .AddOption("Load saved game", (m) => {
                     Game game = makeGameFunc();
                     game.Restore();
                     game.Play();
+                    DoLeaderboardEligibility(game, glb);
                 })
                 .AddOption("Show high scores", (m) => {
                     Leaderboard lb = glb.GetLeaderboard(pSettings.GridWidth, pSettings.GridHeight);
