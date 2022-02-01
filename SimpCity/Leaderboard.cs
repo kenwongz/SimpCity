@@ -43,6 +43,8 @@ namespace SimpCity {
     /// Represents a SimpCity leaderboard for a certain grid dimension.
     /// </summary>
     public class Leaderboard {
+        // The maximum number of records that can be on the leaderboard.
+        private const int MAX_RECORDS = 10;
         /// <summary>
         /// The main internal data structure of the leaderboard.
         /// </summary>
@@ -111,7 +113,20 @@ namespace SimpCity {
 
             // Lower priority; Add to the back
             scoreList.Add(score);
-            TotalScoresCount++;
+
+            if (TotalScoresCount >= MAX_RECORDS) {
+                // Remove the last record to free space
+                var lowest = lb.First();
+                if (lowest.Value.Count == 1) {
+                    // Remove from dict
+                    lb.Remove(lowest.Key);
+                } else {
+                    // Remove last el in list
+                    lowest.Value.RemoveAt(lowest.Value.Count - 1);
+                }
+            } else {
+                TotalScoresCount++;
+            }
         }
 
         /// <summary>
@@ -140,18 +155,18 @@ namespace SimpCity {
             foreach (var kv in lb.Reverse()) {
                 if (scorePoint > kv.Key) {
                     // Highest position
-                    return currPos;
+                    break;
                 }
 
                 // Skip pos to the end of the list
                 currPos += (uint)kv.Value.Count;
                 if (scorePoint == kv.Key) {
-                    return currPos;
+                    break;
                 }
             }
 
-            // Not eligible
-            return currPos;
+            // Not eligible if pos exceeded
+            return currPos > MAX_RECORDS ? 0 : currPos;
         }
 
         /// <summary>
