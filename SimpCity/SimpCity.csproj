@@ -10,7 +10,19 @@
   </PropertyGroup>
 
   <PropertyGroup Label="Package information">
-    <Version>1.0.1</Version>
+    <!-- MAJOR.MINOR.PATCH -->
+    <Version>2.0.0</Version>
+
+    <!-- MAJOR.MINOR.PATCH-PRERELEASE -->
+    <InformationalVersion>$(Version)-alpha</InformationalVersion>
+  </PropertyGroup>
+
+  <PropertyGroup Label="Version information override (DEV build)" Condition="'$(DEV_BUILD_ID)' != ''">
+    <InformationalVersion>$(Version)-dev+$(DEV_BUILD_ID)</InformationalVersion>
+  </PropertyGroup>
+
+  <PropertyGroup Label="Version information override (DEBUG build)" Condition="'$(Configuration)' == 'Debug'">
+    <InformationalVersion>$(Version)-debug+$([System.DateTime]::UtcNow.ToBinary())</InformationalVersion>
   </PropertyGroup>
 
   <ItemGroup>

@@ -5,7 +5,6 @@ namespace SimpCityTests {
     [TestClass]
     public class CityGridBuildingTests {
         /// <summary>
-        /// N/A, US-8a:
         /// This ensures correct score calculation for Beach.
         /// </summary>
         [TestMethod]
@@ -38,7 +37,6 @@ namespace SimpCityTests {
         }
 
         /// <summary>
-        /// N/A, US-8a:
         /// This ensures correct score calculation for House.
         /// </summary>
         [TestMethod]

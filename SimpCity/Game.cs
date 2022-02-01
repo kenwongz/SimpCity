@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Text;
 using SimpCity.buildings;
@@ -15,23 +16,61 @@ namespace SimpCity {
         /// If <i>false</i>, goes back to the default behavior of randomizing 2 building types.
         /// </summary>
         public bool AllowAllBuildingTypes { get; set; } = false;
+        /// <summary>
+        /// The configured width of the game's grid.
+        /// (default <i>4</i>)
+        /// </summary>
+        public int GridWidth { get; set; } = 4;
+        /// <summary>
+        /// The configured height of the game's grid.
+        /// (default <i>4</i>)
+        /// </summary>
+        public int GridHeight { get; set; } = 4;
     }
 
     public class Game {
-        private const int GRID_WIDTH = 4;
-        private const int GRID_HEIGHT = 4;
-        private const int MAX_ROUNDS = GRID_WIDTH * GRID_HEIGHT;
         private const int BUILDING_COPIES = 8;
 
         protected internal readonly GameOptions options;
         protected internal readonly IDictionary<BuildingTypes, BuildingInfo> buildingInfo;
         protected internal readonly CityGrid grid;
         protected internal int round;
+        protected internal BuildingTypes[] currentBuildingPool;
+
+        /// <summary>
+        /// The max number of rounds that can be played in the game.
+        /// </summary>
+        protected internal int MaxRounds {
+            get {
+                return options.GridWidth * options.GridHeight;
+            }
+        }
+
+        /// <summary>
+        /// The configured width of the game's grid.
+        /// </summary>
+        public int GridWidth { get { return options.GridWidth; } }
+        /// <summary>
+        /// The configured height of the game's grid.
+        /// </summary>
+        public int GridHeight { get { return options.GridHeight; } }
+        /// <summary>
+        /// Whether the game has ended.
+        /// </summary>
+        public bool HasEnded {
+            get {
+                return round > MaxRounds;
+            }
+        }
 
         public Game(GameOptions options = null) {
-            grid = new CityGrid(GRID_WIDTH, GRID_HEIGHT);
-            round = 1;
+            if (options == null) options = new GameOptions();
             this.options = options;
+
+            grid = new CityGrid(options.GridWidth, options.GridHeight);
+            round = 1;
+
+            RefreshCurrentBuildingPool();
 
             // Exhaustive list of buildings and their operations
             buildingInfo = new Dictionary<BuildingTypes, BuildingInfo>() {
@@ -126,8 +165,16 @@ namespace SimpCity {
         }
 
         /// <summary>
+        /// Refreshes the current building pool.
+        /// </summary>
+        protected internal void RefreshCurrentBuildingPool() {
+            currentBuildingPool = new BuildingTypes[2] { RandomBuildingType(), RandomBuildingType() };
+        }
+
+        /// <summary>
         /// Display an ASCII wizardry..
         /// </summary>
+        [ExcludeFromCodeCoverage]
         protected void DisplayGrid() {
             for (int y = 0; y < grid.Height; y++) {
 
@@ -279,6 +326,9 @@ namespace SimpCity {
                     foreground: ConsoleColor.Red);
                 return;
             }
+
+            // Randomize the building pool again.
+            RefreshCurrentBuildingPool();
         }
 
         /// <summary>
@@ -371,10 +421,14 @@ namespace SimpCity {
 
         }
 
+        /// <summary>
+        /// Starts the game blockingly.
+        /// </summary>
+        [ExcludeFromCodeCoverage]
         public void Play() {
-            ConsoleMenu menu = new ConsoleMenu()
-                .BeforeInteraction((m) => {
-                    if (round > MAX_ROUNDS) {
+            var menu = new ConsoleMenu()
+                .BeforeInteraction((Action<ConsoleMenu>)((m) => {
+                    if (round > MaxRounds) {
                         // Prepare to exit the game.
                         Console.WriteLine("Final layout of Simp City:");
                         DisplayGrid();
@@ -384,7 +438,7 @@ namespace SimpCity {
                     }
 
                     // Display the round number
-                    Console.WriteLine($"Turn {round} ({MAX_ROUNDS - round + 1} left)");
+                    Console.WriteLine($"Turn {round} ({MaxRounds - round + 1} left)");
                     // Display the current grid
                     DisplayGrid();
 
@@ -400,9 +454,9 @@ namespace SimpCity {
                             );
                         }
                     } else {
-                        // Choose random 2 buildings
+                        // Show the current building pool
                         for (int i = 1; i < 3; i++) {
-                            BuildingTypes chosen = RandomBuildingType();
+                            var chosen = currentBuildingPool[i - 1];
                             // Replace the menu option
                             m.EditOption(
                                 i.ToString(), string.Format("Build a {0}", buildingInfo[chosen].Code),
@@ -411,7 +465,7 @@ namespace SimpCity {
                             );
                         }
                     }
-                });
+                }));
 
             // Counts the number of times a placeholder should be made on the menu
             int placeholderCount = (options?.AllowAllBuildingTypes ?? false) ? buildingInfo.Count : 2;
