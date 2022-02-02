@@ -60,6 +60,28 @@ namespace SimpCity {
             lb.Display();
         }
 
+        /// <summary>
+        /// Blockingly read stdin for a single dimension (width/height).
+        /// </summary>
+        /// <returns>The dimension, -1 if no input.</returns>
+        static int ReadDimension() {
+            int parsedDim = -1;
+            do {
+                string input = Console.ReadLine().Trim();
+                if (input.Length == 0) {
+                    // No input, let's go default
+                    break;
+                }
+                bool couldParse = int.TryParse(input, out parsedDim);
+                if (!couldParse || parsedDim <= 0) {
+                    Utils.WriteLineColored("Input must be an integer and larger than 0!",
+                        foreground: ConsoleColor.Red);
+                    continue;
+                }
+            } while (false);
+            return parsedDim;
+        }
+
         static void Main(string[] args) {
             Assembly assembly = Assembly.GetExecutingAssembly();
             string informationVersion = assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion;
@@ -110,6 +132,24 @@ namespace SimpCity {
                     lb.Display();
                 })
                 .AddHeading()
+                .AddOption("Change city size", (m) => {
+                    Console.WriteLine($"Your current city size is: {pSettings.GridWidth} \u00D7 {pSettings.GridHeight}");
+                    Console.WriteLine("Please enter your new desired city size, or press enter to skip.");
+
+                    Console.ForegroundColor = ConsoleColor.DarkGray;
+                    Console.Write($"New width, # columns: ({pSettings.GridWidth}) ");
+                    Console.ResetColor();
+                    int newWidth = ReadDimension();
+
+                    Console.ForegroundColor = ConsoleColor.DarkGray;
+                    Console.Write($"New height, # rows: ({pSettings.GridHeight}) ");
+                    Console.ResetColor();
+                    int newHeight = ReadDimension();
+
+                    // Set if requested
+                    if (newWidth >= 0) pSettings.GridWidth = newWidth;
+                    if (newHeight >= 0) pSettings.GridHeight = newHeight;
+                })
                 .AddOption("Toggle debug mode", (m) => {
                     pSettings.IsDebugMode = !pSettings.IsDebugMode;
                     Console.Write("Debug mode is now: ");
