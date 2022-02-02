@@ -243,28 +243,6 @@ namespace SimpCity {
             return buildingScores;
         }
 
-        protected void DisplayCurrentScore()
-        {
-            // Score display
-            int currentScore = 0;
-            foreach (var entry in CalculateScores())
-            {
-                string formattedFormula = string.Join(" + ", entry.Value);
-                int score = 0;
-                foreach (int s in entry.Value)
-                {
-                    score += s;
-                }
-                currentScore += score;
-
-                // Display per-type calculation
-                Console.WriteLine($"{buildingInfo[entry.Key].Code}: {formattedFormula}{(entry.Value.Count <= 0 ? "" : " = ")}{score}");
-            }
-
-            // Display the total score
-            Console.WriteLine($"Total score: {currentScore}");
-        }
-
         /// <summary>
         /// Displays the current score.
         /// </summary>
@@ -506,7 +484,7 @@ namespace SimpCity {
             // Add in the remaining options
             menu.AddOption("See remaining buildings", (m) => Console.WriteLine("Todo remaining building"))
                 .AddOption("See current score", (m) => {
-                    DisplayCurrentScore();
+                    DisplayScores();
                 })
                 .AddHeading()
                 .AddOption("Save game", (m) => {
