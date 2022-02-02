@@ -223,8 +223,15 @@ namespace SimpCity {
                 for (int x = 0; x < grid.Width; x++) {
                     try {
                         CityGridBuilding b = grid.Get(new CityGridPosition(x, y));
-                        buildingScores[b.Info.Type].Add(b.CalcScore(calcArchive));
-                        calcArchive.calculated(b);
+                        if (b != null)
+                        {
+                            buildingScores[b.Info.Type].Add(b.CalcScore(calcArchive));
+                            calcArchive.calculated(b);
+                        }
+                        else
+                        {
+                            continue;
+                        }
                     } catch (Exception ex) {
                         // TODO: Temporary catching while US-8 is in progress.
                         Utils.WriteLineColored(ex.Message,
@@ -234,6 +241,28 @@ namespace SimpCity {
             }
 
             return buildingScores;
+        }
+
+        protected void DisplayCurrentScore()
+        {
+            // Score display
+            int currentScore = 0;
+            foreach (var entry in CalculateScores())
+            {
+                string formattedFormula = string.Join(" + ", entry.Value);
+                int score = 0;
+                foreach (int s in entry.Value)
+                {
+                    score += s;
+                }
+                currentScore += score;
+
+                // Display per-type calculation
+                Console.WriteLine($"{buildingInfo[entry.Key].Code}: {formattedFormula}{(entry.Value.Count <= 0 ? "" : " = ")}{score}");
+            }
+
+            // Display the total score
+            Console.WriteLine($"Total score: {currentScore}");
         }
 
         /// <summary>
@@ -476,7 +505,9 @@ namespace SimpCity {
 
             // Add in the remaining options
             menu.AddOption("See remaining buildings", (m) => Console.WriteLine("Todo remaining building"))
-                .AddOption("See current score", (m) => Console.WriteLine("Todo curr score"))
+                .AddOption("See current score", (m) => {
+                    DisplayCurrentScore();
+                })
                 .AddHeading()
                 .AddOption("Save game", (m) => {
                     Save();
