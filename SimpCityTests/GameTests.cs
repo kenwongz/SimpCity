@@ -61,6 +61,42 @@ namespace SimpCityTests {
         }
 
         /// <summary>
+        /// This ensures that the function will throw an error when attempting to place buiding
+        /// outside of the boundaries, in a grid size of 5 by 6.
+        /// </summary>
+        [TestMethod]
+        public void BuildAt_ThrowsException_WhenOutOfBoundsAndCustomSize() {
+            Game game = new Game(new GameOptions { 
+                GridWidth = 5,
+                GridHeight = 6
+            });
+
+            try {
+                // Build a beach at 5,6, should throw
+                game.BuildAt(game.buildingInfo[BuildingTypes.Beach], new CityGridPosition(5, 6));
+
+                Assert.Fail("Did not throw an error");
+            } catch (IndexOutOfRangeException) {
+                // All good, test passed.
+            } catch (Exception) {
+                // Not the right exception type
+                Assert.Fail("Wrong exception");
+            }
+
+            try {
+                // Build a beach at -1,0 should throw
+                game.BuildAt(game.buildingInfo[BuildingTypes.Beach], new CityGridPosition(-1, 0));
+
+                Assert.Fail("Did not throw an error");
+            } catch (IndexOutOfRangeException) {
+                // All good, test passed.
+            } catch (Exception) {
+                // Not the right exception type
+                Assert.Fail("Wrong exception");
+            }
+        }
+
+        /// <summary>
         /// This ensures that the game will increment the round counter properly.
         /// </summary>
         [TestMethod]
