@@ -29,6 +29,134 @@ namespace SimpCityTests {
         }
 
         /// <summary>
+        /// QA-SN-5, US-6:
+        /// This ensures that the game can place buildings down.
+        /// Test House
+        /// </summary>
+        [TestMethod]
+        public void BuildAt_PlaceHouse_WhenCalledProperly() {
+            Game game = new Game();
+
+            // Build a beach at 0,1
+            game.BuildAt(game.buildingInfo[BuildingTypes.House], new CityGridPosition(0, 1));
+
+            // Ensure that the building is at 0,1
+            Assert.IsTrue(TestUtils.IsGridEqual(game.grid, new string[4, 4] {
+                { null, "HSE", null, null },
+                { null, null, null, null },
+                { null, null, null, null },
+                { null, null, null, null },
+            }));
+        }
+
+        /// <summary>
+        /// QA-SN-5, US-6:
+        /// This ensures that the game can place buildings down.
+        /// Test Factory
+        /// </summary>
+        [TestMethod]
+        public void BuildAt_PlaceFactory_WhenCalledProperly() {
+            Game game = new Game();
+
+            // Build a beach at 0,1
+            game.BuildAt(game.buildingInfo[BuildingTypes.Factory], new CityGridPosition(0, 1));
+
+            // Ensure that the building is at 0,1
+            Assert.IsTrue(TestUtils.IsGridEqual(game.grid, new string[4, 4] {
+                { null, "FAC", null, null },
+                { null, null, null, null },
+                { null, null, null, null },
+                { null, null, null, null },
+            }));
+        }
+
+        /// <summary>
+        /// QA-SN-5, US-6:
+        /// This ensures that the game can place buildings down.
+        /// Test shop
+        /// </summary>
+        [TestMethod]
+        public void BuildAt_Placeshop_WhenCalledProperly() {
+            Game game = new Game();
+
+            // Build a beach at 0,1
+            game.BuildAt(game.buildingInfo[BuildingTypes.Shop], new CityGridPosition(0, 1));
+
+            // Ensure that the building is at 0,1
+            Assert.IsTrue(TestUtils.IsGridEqual(game.grid, new string[4, 4] {
+                { null, "SHP", null, null },
+                { null, null, null, null },
+                { null, null, null, null },
+                { null, null, null, null },
+            }));
+        }
+
+        /// <summary>
+        /// QA-SN-5, US-6:
+        /// This ensures that the game can place buildings down.
+        /// Test Monument
+        /// </summary>
+        [TestMethod]
+        public void BuildAt_PlaceMonument_WhenCalledProperly() {
+            Game game = new Game();
+
+            // Build a beach at 0,1
+            game.BuildAt(game.buildingInfo[BuildingTypes.Monument], new CityGridPosition(0, 1));
+
+            // Ensure that the building is at 0,1
+            Assert.IsTrue(TestUtils.IsGridEqual(game.grid, new string[4, 4] {
+                { null, "MON", null, null },
+                { null, null, null, null },
+                { null, null, null, null },
+                { null, null, null, null },
+            }));
+        }
+
+
+        /// <summary>
+        /// QA-SN-5, US-6:
+        /// This ensures that the game can place buildings down.
+        /// Test Park
+        /// </summary>
+        [TestMethod]
+        public void BuildAt_PlacePark_WhenCalledProperly() {
+            Game game = new Game();
+
+            // Build a beach at 0,1
+            game.BuildAt(game.buildingInfo[BuildingTypes.Park], new CityGridPosition(0, 1));
+
+            // Ensure that the building is at 0,1
+            Assert.IsTrue(TestUtils.IsGridEqual(game.grid, new string[4, 4] {
+                { null, "PRK", null, null },
+                { null, null, null, null },
+                { null, null, null, null },
+                { null, null, null, null },
+            }));
+        }
+
+        /// <summary>
+        /// QA-SN-5, US-6:
+        /// This ensures that the game can place buildings down.
+        /// Test Highway
+        /// </summary>
+        [TestMethod]
+        public void BuildAt_PlaceHighway_WhenCalledProperly() {
+            Game game = new Game();
+
+            // Build a beach at 0,1
+            game.BuildAt(game.buildingInfo[BuildingTypes.Highway], new CityGridPosition(0, 1));
+
+            // Ensure that the building is at 0,1
+            Assert.IsTrue(TestUtils.IsGridEqual(game.grid, new string[4, 4] {
+                { null, "HWY", null, null },
+                { null, null, null, null },
+                { null, null, null, null },
+                { null, null, null, null },
+            }));
+        }
+
+
+        /// <summary>
         /// This ensures that the function will throw an error when an existing position is given.
         /// </summary>
         [TestMethod]
