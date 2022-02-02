@@ -223,8 +223,15 @@ namespace SimpCity {
                 for (int x = 0; x < grid.Width; x++) {
                     try {
                         CityGridBuilding b = grid.Get(new CityGridPosition(x, y));
-                        buildingScores[b.Info.Type].Add(b.CalcScore(calcArchive));
+                        if (b != null)
+                        {
+                            buildingScores[b.Info.Type].Add(b.CalcScore(calcArchive));
                         calcArchive.calculated(b);
+                        }
+                        else
+                        {
+                            continue;
+                        }
                     } catch (Exception ex) {
                         // TODO: Temporary catching while US-8 is in progress.
                         Utils.WriteLineColored(ex.Message,
@@ -476,7 +483,9 @@ namespace SimpCity {
 
             // Add in the remaining options
             menu.AddOption("See remaining buildings", (m) => Console.WriteLine("Todo remaining building"))
-                .AddOption("See current score", (m) => Console.WriteLine("Todo curr score"))
+                .AddOption("See current score", (m) => {
+                    DisplayScores();
+                })
                 .AddHeading()
                 .AddOption("Save game", (m) => {
                     Save();
