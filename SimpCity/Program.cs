@@ -12,6 +12,8 @@ namespace SimpCity {
 
     [ExcludeFromCodeCoverage]
     class Program {
+        const int MAX_DIMENSION = 10;
+
         /// <summary>
         /// Checks the score for leaderboard eligibility. If eligible, prompts for player's name to add
         /// to the leaderboard.
@@ -64,21 +66,40 @@ namespace SimpCity {
         /// Blockingly read stdin for a single dimension (width/height).
         /// </summary>
         /// <returns>The dimension, -1 if no input.</returns>
-        static int ReadDimension() {
+        static int ReadDimension(string prompt) {
             int parsedDim = -1;
-            do {
+            while (true) {
+                // Display prompt, usually asking for input
+                Console.ForegroundColor = ConsoleColor.DarkGray;
+                Console.Write(prompt);
+                Console.ResetColor();
+
                 string input = Console.ReadLine().Trim();
                 if (input.Length == 0) {
                     // No input, let's go default
                     break;
                 }
-                bool couldParse = int.TryParse(input, out parsedDim);
-                if (!couldParse || parsedDim <= 0) {
+
+                int parsed;
+                bool couldParse = int.TryParse(input, out parsed);
+                if (!couldParse || parsed <= 0) {
                     Utils.WriteLineColored("Input must be an integer and larger than 0!",
                         foreground: ConsoleColor.Red);
                     continue;
                 }
-            } while (false);
+
+                // We set a defined limit to the maximum dimension
+                if (parsed > MAX_DIMENSION) {
+                    Utils.WriteLineColored($"Input must not be larger than {MAX_DIMENSION}!",
+                        foreground: ConsoleColor.Red);
+                    continue;
+                }
+
+                // Validated
+                parsedDim = parsed;
+                break;
+            };
+
             return parsedDim;
         }
 
@@ -136,15 +157,8 @@ namespace SimpCity {
                     Console.WriteLine($"Your current city size is: {pSettings.GridWidth} \u00D7 {pSettings.GridHeight}");
                     Console.WriteLine("Please enter your new desired city size, or press enter to skip.");
 
-                    Console.ForegroundColor = ConsoleColor.DarkGray;
-                    Console.Write($"New width, # columns: ({pSettings.GridWidth}) ");
-                    Console.ResetColor();
-                    int newWidth = ReadDimension();
-
-                    Console.ForegroundColor = ConsoleColor.DarkGray;
-                    Console.Write($"New height, # rows: ({pSettings.GridHeight}) ");
-                    Console.ResetColor();
-                    int newHeight = ReadDimension();
+                    int newWidth = ReadDimension($"New width, # columns: ({pSettings.GridWidth}) ");
+                    int newHeight = ReadDimension($"New height, # rows: ({pSettings.GridHeight}) ");
 
                     // Set if requested
                     if (newWidth >= 0) pSettings.GridWidth = newWidth;
