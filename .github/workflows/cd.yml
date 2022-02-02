@@ -15,7 +15,7 @@ on:
   workflow_dispatch:
 
 env:
-  IS_TAGGED_BUILD: "startsWith(github.ref, 'refs/tags/')"
+  IS_TAGGED_BUILD: ${{ startsWith(github.ref, 'refs/tags/') }}
 
 jobs:
   build:
@@ -30,15 +30,15 @@ jobs:
           dotnet-version: '5.0.x' # SDK Version to use; x will use the latest version
 
       - name: Restore Packages
-        run: dotnet restore
+        run: dotnet restore SimpCity
 
       - name: Build and Publish Tagged Artifact
         if: ${{ env.IS_TAGGED_BUILD }}
-        run: dotnet publish --configuration Release --no-restore --runtime win-x64
+        run: dotnet publish SimpCity --configuration Release --no-restore --runtime win-x64
 
       - name: Build and Publish Dev Artifact
-        if: "!${{ env.IS_TAGGED_BUILD }}"
-        run: dotnet publish --configuration Release --no-restore --runtime win-x64 -p:DEV_BUILD_ID=${{ github.sha }}
+        if: ${{ !env.IS_TAGGED_BUILD }}
+        run: dotnet publish SimpCity --configuration Release --no-restore --runtime win-x64 -p:DEV_BUILD_ID=${{ github.sha }}
 
       - name: Rename Output
         working-directory: SimpCity\bin\Release\net5.0\win-x64\publish
@@ -52,7 +52,7 @@ jobs:
 
       - name: Create Dev Release
         uses: softprops/action-gh-release@v1
-        if: "!${{ env.IS_TAGGED_BUILD }}"
+        if: ${{ !env.IS_TAGGED_BUILD }}
         with:
           tag_name: dev-${{ github.sha }}
           name: Release dev-${{ github.sha }}
