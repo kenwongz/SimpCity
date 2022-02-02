@@ -40,18 +40,24 @@ namespace SimpCity {
             Console.WriteLine($"Congratulations! You made the high score board at position {lbPosition}!");
 
             string name;
-            do {
+            while (true) {
                 Console.ForegroundColor = ConsoleColor.DarkGray;
                 Console.Write("Please enter your name (max 20 chars): ");
                 Console.ResetColor();
 
                 name = Console.ReadLine().Trim();
-                if (name.Length > 20) {
+                if (name.Length == 0) {
+                    Utils.WriteLineColored("Your name cannot be empty!",
+                        foreground: ConsoleColor.Red);
+                    continue;
+                } else if (name.Length > 20) {
                     Utils.WriteLineColored($"Your name exceeds the limit by {name.Length - 20} chars!",
                         foreground: ConsoleColor.Red);
                     continue;
                 }
-            } while (false);
+
+                break;
+            };
 
             lb.AddScore(new LeaderboardScore {
                 PlayerName = name,
