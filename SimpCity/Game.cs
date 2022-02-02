@@ -223,14 +223,11 @@ namespace SimpCity {
                 for (int x = 0; x < grid.Width; x++) {
                     try {
                         CityGridBuilding b = grid.Get(new CityGridPosition(x, y));
-                        if (b != null)
-                        {
+                        if (b != null) {
                             buildingScores[b.Info.Type].Add(b.CalcScore(calcArchive));
-                        calcArchive.calculated(b);
-                        }
-                        else
-                        {
-                            continue;
+                            calcArchive.calculated(b); 
+                        } else {
+                            continue; 
                         }
                     } catch (Exception ex) {
                         // TODO: Temporary catching while US-8 is in progress.
