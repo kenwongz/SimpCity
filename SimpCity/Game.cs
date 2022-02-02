@@ -427,7 +427,7 @@ namespace SimpCity {
         [ExcludeFromCodeCoverage]
         public void Play() {
             var menu = new ConsoleMenu()
-                .BeforeInteraction((Action<ConsoleMenu>)((m) => {
+                .BeforeInteraction((m) => {
                     if (round > MaxRounds) {
                         // Prepare to exit the game.
                         Console.WriteLine("Final layout of Simp City:");
@@ -465,7 +465,7 @@ namespace SimpCity {
                             );
                         }
                     }
-                }));
+                });
 
             // Counts the number of times a placeholder should be made on the menu
             int placeholderCount = (options?.AllowAllBuildingTypes ?? false) ? buildingInfo.Count : 2;
