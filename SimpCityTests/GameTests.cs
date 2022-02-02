@@ -10,7 +10,6 @@ namespace SimpCityTests {
     [TestClass]
     public class GameTests {
         /// <summary>
-        /// QA-SN-5, US-6:
         /// This ensures that the game can place buildings down.
         /// </summary>
         [TestMethod]
@@ -30,7 +29,6 @@ namespace SimpCityTests {
         }
 
         /// <summary>
-        /// N/A:
         /// This ensures that the function will throw an error when an existing position is given.
         /// </summary>
         [TestMethod]
@@ -46,7 +44,6 @@ namespace SimpCityTests {
         }
 
         /// <summary>
-        /// QA-SN-19:
         /// This ensures that the function will throw an error after the first round, when attempting
         /// to place at a position with no adjacent buildings.
         /// </summary>
@@ -64,7 +61,6 @@ namespace SimpCityTests {
         }
 
         /// <summary>
-        /// N/A, US-9:
         /// This ensures that the game will increment the round counter properly.
         /// </summary>
         [TestMethod]
@@ -88,7 +84,6 @@ namespace SimpCityTests {
         }
 
         /// <summary>
-        /// N/A:
         /// This ensures that a position input is correctly mapped.
         /// </summary>
         [TestMethod]
@@ -103,7 +98,6 @@ namespace SimpCityTests {
         }
 
         /// <summary>
-        /// N/A:
         /// This ensures that the function will throw an error when an existing position is given.
         /// </summary>
         [TestMethod]

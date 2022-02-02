@@ -1,15 +1,21 @@
-# Workflow based off https://timheuer.com/blog/building-net-framework-apps-using-github-actions/#defining-the-.net-framework-build-steps
+# Workflow file adapted from https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
 name: Build and Publish
 
 # Trigger this CD on push
 on:
   push:
+    # Build on push
+    branches:
+      - main
     # Sequence of patterns matched against refs/tags
     tags:
       - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
   # Allows running this workflow manually from the Actions tab, useful for Developers who may want
   # to view test status on the production end, prior to main branch merge.
   workflow_dispatch:
+
+env:
+  IS_TAGGED_BUILD: "startsWith(github.ref, 'refs/tags/')"
 
 jobs:
   build:
@@ -18,27 +24,35 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Setup MSBuild Path
-        uses: microsoft/setup-msbuild@v1
-
-      - name: Setup NuGet
-        uses: NuGet/setup-nuget@v1.0.5
+      - name: Setup Dotnet
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '5.0.x' # SDK Version to use; x will use the latest version
 
       - name: Restore Packages
-        run: nuget restore SimpCity.sln
+        run: dotnet restore
 
-      - name: Build and Publish Artifact
-        run: msbuild SimpCity.sln /p:Configuration=Release /p:DeployOnBuild=true /p:PublishProfile=FolderProfile
+      - name: Build and Publish Tagged Artifact
+        if: ${{ env.IS_TAGGED_BUILD }}
+        run: dotnet publish --configuration Release --no-restore --runtime win-x64
+
+      - name: Build and Publish Dev Artifact
+        if: "!${{ env.IS_TAGGED_BUILD }}"
+        run: dotnet publish --configuration Release --no-restore --runtime win-x64 -p:DEV_BUILD_ID=${{ github.sha }}
+
+      - name: Rename Output
+        working-directory: SimpCity\bin\Release\net5.0\win-x64\publish
+        run: mv SimpCity.exe SimpCity-win-x64.exe
 
       - name: Upload Artifact
-        uses: actions/upload-artifact@v1.0.0
+        uses: actions/upload-artifact@v2
         with:
           name: SimpCity-Artifact
           path: SimpCity\bin\Release
 
       - name: Create Dev Release
         uses: softprops/action-gh-release@v1
-        if: "!startsWith(github.ref, 'refs/tags/')"
+        if: "!${{ env.IS_TAGGED_BUILD }}"
         with:
           tag_name: dev-${{ github.sha }}
           name: Release dev-${{ github.sha }}
@@ -48,10 +62,10 @@ jobs:
           draft: false
           prerelease: true
           files: |
-            SimpCity\bin\Release\SimpCity.exe
+            SimpCity\bin\Release\net5.0\win-x64\publish\SimpCity-win-x64.exe
 
-      - name: Create Prod Release
-        if: "startsWith(github.ref, 'refs/tags/')"
+      - name: Create Tagged Release
+        if: ${{ env.IS_TAGGED_BUILD }}
         uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ github.ref_name }}
@@ -59,4 +73,4 @@ jobs:
           draft: false
           prerelease: false
           files: |
-            SimpCity\bin\Release\SimpCity.exe
+            SimpCity\bin\Release\net5.0\win-x64\publish\SimpCity-win-x64.exe

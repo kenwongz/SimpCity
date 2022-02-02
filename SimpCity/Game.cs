@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Text;
 using SimpCity.buildings;
@@ -10,23 +11,66 @@ namespace SimpCity {
         /// Disables the rule for adjacent placement of new buildings.
         /// </summary>
         public bool DisableAdjacentRule { get; set; } = false;
+        /// <summary>
+        /// Allows all available building types to be chosen
+        /// If <i>false</i>, goes back to the default behavior of randomizing 2 building types.
+        /// </summary>
+        public bool AllowAllBuildingTypes { get; set; } = false;
+        /// <summary>
+        /// The configured width of the game's grid.
+        /// (default <i>4</i>)
+        /// </summary>
+        public int GridWidth { get; set; } = 4;
+        /// <summary>
+        /// The configured height of the game's grid.
+        /// (default <i>4</i>)
+        /// </summary>
+        public int GridHeight { get; set; } = 4;
     }
 
     public class Game {
-        private const int GRID_WIDTH = 4;
-        private const int GRID_HEIGHT = 4;
-        private const int MAX_ROUNDS = GRID_WIDTH * GRID_HEIGHT;
         private const int BUILDING_COPIES = 8;
 
         protected internal readonly GameOptions options;
         protected internal readonly IDictionary<BuildingTypes, BuildingInfo> buildingInfo;
         protected internal readonly CityGrid grid;
         protected internal int round;
+        protected internal BuildingTypes[] currentBuildingPool;
+
+        /// <summary>
+        /// The max number of rounds that can be played in the game.
+        /// </summary>
+        protected internal int MaxRounds {
+            get {
+                return options.GridWidth * options.GridHeight;
+            }
+        }
+
+        /// <summary>
+        /// The configured width of the game's grid.
+        /// </summary>
+        public int GridWidth { get { return options.GridWidth; } }
+        /// <summary>
+        /// The configured height of the game's grid.
+        /// </summary>
+        public int GridHeight { get { return options.GridHeight; } }
+        /// <summary>
+        /// Whether the game has ended.
+        /// </summary>
+        public bool HasEnded {
+            get {
+                return round > MaxRounds;
+            }
+        }
 
         public Game(GameOptions options = null) {
-            grid = new CityGrid(GRID_WIDTH, GRID_HEIGHT);
-            round = 1;
+            if (options == null) options = new GameOptions();
             this.options = options;
+
+            grid = new CityGrid(options.GridWidth, options.GridHeight);
+            round = 1;
+
+            RefreshCurrentBuildingPool();
 
             // Exhaustive list of buildings and their operations
             buildingInfo = new Dictionary<BuildingTypes, BuildingInfo>() {
@@ -121,8 +165,16 @@ namespace SimpCity {
         }
 
         /// <summary>
+        /// Refreshes the current building pool.
+        /// </summary>
+        protected internal void RefreshCurrentBuildingPool() {
+            currentBuildingPool = new BuildingTypes[2] { RandomBuildingType(), RandomBuildingType() };
+        }
+
+        /// <summary>
         /// Display an ASCII wizardry..
         /// </summary>
+        [ExcludeFromCodeCoverage]
         protected void DisplayGrid() {
             for (int y = 0; y < grid.Height; y++) {
 
@@ -171,17 +223,19 @@ namespace SimpCity {
                 for (int x = 0; x < grid.Width; x++) {
                     try {
                         CityGridBuilding b = grid.Get(new CityGridPosition(x, y));
-                        if (b != null) {
+                        if (b != null)
+                        {
                             buildingScores[b.Info.Type].Add(b.CalcScore(calcArchive));
                             calcArchive.calculated(b);
-                        } 
+                        }
                         else
+                        {
                             continue;
+                        }
                     } catch (Exception ex) {
                         // TODO: Temporary catching while US-8 is in progress.
-                        Console.ForegroundColor = ConsoleColor.Red;
-                        Console.WriteLine(ex.Message);
-                        Console.ResetColor();
+                        Utils.WriteLineColored(ex.Message,
+                            foreground: ConsoleColor.Red);
                     }
                 }
             }
@@ -189,25 +243,30 @@ namespace SimpCity {
             return buildingScores;
         }
 
-        /// <summary>
-        /// Displays the current score.
-        protected void DisplayCurrentScore() {
+        protected void DisplayCurrentScore()
+        {
+            // Score display
             int currentScore = 0;
-            foreach (var entry in CalculateScores()) {
+            foreach (var entry in CalculateScores())
+            {
                 string formattedFormula = string.Join(" + ", entry.Value);
                 int score = 0;
-                foreach (int s in entry.Value) {
+                foreach (int s in entry.Value)
+                {
                     score += s;
                 }
                 currentScore += score;
-                
-                // Display per type calculation
+
+                // Display per-type calculation
                 Console.WriteLine($"{buildingInfo[entry.Key].Code}: {formattedFormula}{(entry.Value.Count <= 0 ? "" : " = ")}{score}");
             }
 
             // Display the total score
             Console.WriteLine($"Total score: {currentScore}");
         }
+
+        /// <summary>
+        /// Displays the current score.
         /// </summary>
         protected void DisplayScores() {
             // Score display
@@ -259,7 +318,7 @@ namespace SimpCity {
                 }
                 if (!hasAdjacent) {
                     throw new InvalidOperationException("You must build next to an existing building.");
-                } 
+                }
             }
 
             // All errors have been caught prior, let's skip the check with force = true
@@ -282,9 +341,8 @@ namespace SimpCity {
                     pos = InputToPos(Console.ReadLine());
                     break;
                 } catch (ArgumentException ex) {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine(ex.Message);
-                    Console.ResetColor();
+                    Utils.WriteLineColored(ex.Message,
+                        foreground: ConsoleColor.Red);
                     continue;
                 }
             }
@@ -293,11 +351,13 @@ namespace SimpCity {
             try {
                 BuildAt(info, pos);
             } catch (Exception ex) {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine(ex.Message);
-                Console.ResetColor();
+                Utils.WriteLineColored(ex.Message,
+                    foreground: ConsoleColor.Red);
                 return;
             }
+
+            // Randomize the building pool again.
+            RefreshCurrentBuildingPool();
         }
 
         /// <summary>
@@ -390,10 +450,14 @@ namespace SimpCity {
 
         }
 
+        /// <summary>
+        /// Starts the game blockingly.
+        /// </summary>
+        [ExcludeFromCodeCoverage]
         public void Play() {
-            ConsoleMenu menu = new ConsoleMenu()
-                .BeforeInteraction((m) => {
-                    if (round > MAX_ROUNDS) {
+            var menu = new ConsoleMenu()
+                .BeforeInteraction((Action<ConsoleMenu>)((m) => {
+                    if (round > MaxRounds) {
                         // Prepare to exit the game.
                         Console.WriteLine("Final layout of Simp City:");
                         DisplayGrid();
@@ -403,30 +467,50 @@ namespace SimpCity {
                     }
 
                     // Display the round number
-                    Console.WriteLine($"Turn {round} ({MAX_ROUNDS - round + 1} left)");
+                    Console.WriteLine($"Turn {round} ({MaxRounds - round + 1} left)");
                     // Display the current grid
                     DisplayGrid();
-                    // Choose random 2 buildings
-                    for (int i = 1; i < 3; i++) {
-                        BuildingTypes chosen = RandomBuildingType();
-                        // Replace the menu option
-                        m.EditOption(
-                            i.ToString(), string.Format("Build a {0}", buildingInfo[chosen].Code),
-                            // Create a new building object and make the move
-                            (_) => OnMakeMove(buildingInfo[chosen])
-                        );
+
+                    if (options?.AllowAllBuildingTypes ?? false) {
+                        // Replace all placeholders with the all the building types
+                        int loopCount = 0;
+                        foreach (var item in buildingInfo) {
+                            loopCount++;
+                            m.EditOption(
+                                loopCount.ToString(), string.Format("Build a {0}", item.Value.Code),
+                                // Trigger the make-move event
+                                (_) => OnMakeMove(item.Value)
+                            );
+                        }
+                    } else {
+                        // Show the current building pool
+                        for (int i = 1; i < 3; i++) {
+                            var chosen = currentBuildingPool[i - 1];
+                            // Replace the menu option
+                            m.EditOption(
+                                i.ToString(), string.Format("Build a {0}", buildingInfo[chosen].Code),
+                                // Trigger the make-move event
+                                (_) => OnMakeMove(buildingInfo[chosen])
+                            );
+                        }
                     }
-                })
-                // These two placeholders will be edited accordingly before each interaction
-                .AddOption("Placeholder 1")
-                .AddOption("Placeholder 2")
-                .AddOption("See remaining buildings", (m) => Console.WriteLine("Todo remaining building"))
+                }));
+
+            // Counts the number of times a placeholder should be made on the menu
+            int placeholderCount = (options?.AllowAllBuildingTypes ?? false) ? buildingInfo.Count : 2;
+            for (int i = 0; i < placeholderCount; i++) {
+                // Stub placeholder, its description does not really matter
+                menu.AddOption(null);
+            }
+
+            // Add in the remaining options
+            menu.AddOption("See remaining buildings", (m) => Console.WriteLine("Todo remaining building"))
                 .AddOption("See current score", (m) => {
                     DisplayCurrentScore();
                 })
                 .AddHeading()
                 .AddOption("Save game", (m) => {
-                   Save();
+                    Save();
                 })
                 .AddExitOption("Exit to main menu");
 
