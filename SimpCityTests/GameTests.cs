@@ -21,7 +21,7 @@ namespace SimpCityTests {
             game.BuildAt(game.buildingInfo[BuildingTypes.Factory], new CityGridPosition(1, 1));
             game.BuildAt(game.buildingInfo[BuildingTypes.Highway], new CityGridPosition(0, 0));
             game.BuildAt(game.buildingInfo[BuildingTypes.House], new CityGridPosition(1, 0));
-            game.BuildAt(game.buildingInfo[BuildingTypes.Monument], new CityGridPosition(0, 3));
+            game.BuildAt(game.buildingInfo[BuildingTypes.Monument], new CityGridPosition(0, 2));
             game.BuildAt(game.buildingInfo[BuildingTypes.Park], new CityGridPosition(1, 2));
             game.BuildAt(game.buildingInfo[BuildingTypes.Shop], new CityGridPosition(2, 0));
 
