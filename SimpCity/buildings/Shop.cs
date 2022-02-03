@@ -10,7 +10,13 @@ namespace SimpCity.buildings {
         public Shop(BuildingInfo info) : base(info) { }
 
         public override int CalcScore(ScoreCalculationArchive archive) {
-            int score = 0;
+            int score = 1;
+            bool hasFactory = false;
+            bool hasBeach = false;
+            bool hasHighway = false;
+            bool hasHouse = false;
+            bool hasMonument = false;
+            bool hasPark = false;
             foreach (CityGridOffset offset in CityGrid.BesideOffsets()) {
                 CityGridBuilding besideBuilding;
                 try {
@@ -19,27 +25,42 @@ namespace SimpCity.buildings {
                     // ignore, nothing to do.
                     continue;
                 }
-                if (besideBuilding is Beach) {
-                    score += 1;
-                }
                 if (besideBuilding is Factory) {
-                    score += 1;
+                    hasFactory = true;
+                }
+                if (besideBuilding is Beach) {
+                    hasBeach = true;
                 }
                 if (besideBuilding is Highway) {
-                    score += 1;
+                    hasBeach = true;
                 }
                 if (besideBuilding is House) {
-                    score += 1;
+                    hasHouse = true;
                 }
                 if (besideBuilding is Monument) {
-                    score += 1;
+                    hasHouse = true;
                 }
                 if (besideBuilding is Park) {
-                    score += 1;
+                    hasHouse = true;
                 }
-                if (besideBuilding is Shop) {
-                    score += 0;
-                }
+            }
+            if (hasFactory) {
+                score+=1;
+            }
+            if (hasBeach) {
+                score += 1;
+            }
+            if (hasHighway) {
+                score += 1;
+            }
+            if (hasHouse) {
+                score += 1;
+            }
+            if (hasMonument) {
+                score += 1;
+            }
+            if (hasPark) {
+                score += 1;
             }
 
             return score;
