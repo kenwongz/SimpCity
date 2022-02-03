@@ -37,3 +37,7 @@ jobs:
         with:
           name: SimpCity Test Results
           path: SimpCityTests\TestResults
+          
+      - uses: codecov/codecov-action@v2
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }} 
