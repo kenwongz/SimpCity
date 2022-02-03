@@ -33,11 +33,11 @@ jobs:
         run: dotnet restore SimpCity
 
       - name: Build and Publish Tagged Artifact
-        if: ${{ env.IS_TAGGED_BUILD }}
+        if: ${{ env.IS_TAGGED_BUILD == 'true' }}
         run: dotnet publish SimpCity --configuration Release --no-restore --runtime win-x64
 
       - name: Build and Publish Dev Artifact
-        if: ${{ !env.IS_TAGGED_BUILD }}
+        if: ${{ env.IS_TAGGED_BUILD == 'false' }}
         run: dotnet publish SimpCity --configuration Release --no-restore --runtime win-x64 -p:DEV_BUILD_ID=${{ github.sha }}
 
       - name: Rename Output
@@ -52,7 +52,7 @@ jobs:
 
       - name: Create Dev Release
         uses: softprops/action-gh-release@v1
-        if: ${{ !env.IS_TAGGED_BUILD }}
+        if: ${{ env.IS_TAGGED_BUILD == 'false' }}
         with:
           tag_name: dev-${{ github.sha }}
           name: Release dev-${{ github.sha }}
@@ -65,7 +65,7 @@ jobs:
             SimpCity\bin\Release\net5.0\win-x64\publish\SimpCity-win-x64.exe
 
       - name: Create Tagged Release
-        if: ${{ env.IS_TAGGED_BUILD }}
+        if: ${{ env.IS_TAGGED_BUILD == 'true' }}
         uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ github.ref_name }}
