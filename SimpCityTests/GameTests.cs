@@ -10,10 +10,31 @@ namespace SimpCityTests {
     [TestClass]
     public class GameTests {
         /// <summary>
-        /// This ensures that the game can place buildings down.
+        /// This ensures that the game can place Beach down
         /// </summary>
         [TestMethod]
         public void BuildAt_PlacesBuilding_WhenCalledProperly() {
+            Game game = new Game();
+
+            // Building various buildings
+            game.BuildAt(game.buildingInfo[BuildingTypes.Beach], new CityGridPosition(0, 1));
+
+            // Ensures that the beach is at 0,1
+            Assert.IsTrue(TestUtils.IsGridEqual(game.grid, new string[4, 4] {
+                { null, "BCH", null, null },
+                { null, null, null, null },
+                { null, null , null, null },
+                { null, null, null, null },
+            }));
+        }
+
+
+
+        /// <summary>
+        /// This ensures that the game can place various buildings down.
+        /// </summary>
+        [TestMethod]
+        public void BuildAt_PlacesALLBuildingTypes_WhenCalledProperly() {
             Game game = new Game();
 
             // Building various buildings
