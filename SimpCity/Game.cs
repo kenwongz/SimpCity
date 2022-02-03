@@ -29,8 +29,6 @@ namespace SimpCity {
     }
 
     public class Game {
-        private const int BUILDING_COPIES = 8;
-
         protected internal readonly GameOptions options;
         protected internal readonly IDictionary<BuildingTypes, BuildingInfo> buildingInfo;
         protected internal readonly CityGrid grid;
@@ -129,7 +127,8 @@ namespace SimpCity {
             // Automatically assign Type, CopiesLeft & Grid
             foreach (var item in buildingInfo) {
                 item.Value.Type = item.Key;
-                item.Value.CopiesLeft = BUILDING_COPIES;
+                // C# does floor division implicitly on integers
+                item.Value.CopiesLeft = GridWidth * GridHeight / 2;
                 item.Value.Grid = grid;
             }
         }
@@ -427,7 +426,7 @@ namespace SimpCity {
         [ExcludeFromCodeCoverage]
         public void Play() {
             var menu = new ConsoleMenu()
-                .BeforeInteraction((Action<ConsoleMenu>)((m) => {
+                .BeforeInteraction((m) => {
                     if (round > MaxRounds) {
                         // Prepare to exit the game.
                         Console.WriteLine("Final layout of Simp City:");
@@ -465,7 +464,7 @@ namespace SimpCity {
                             );
                         }
                     }
-                }));
+                });
 
             // Counts the number of times a placeholder should be made on the menu
             int placeholderCount = (options?.AllowAllBuildingTypes ?? false) ? buildingInfo.Count : 2;

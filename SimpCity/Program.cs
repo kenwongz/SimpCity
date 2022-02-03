@@ -12,6 +12,8 @@ namespace SimpCity {
 
     [ExcludeFromCodeCoverage]
     class Program {
+        const int MAX_DIMENSION = 10;
+
         /// <summary>
         /// Checks the score for leaderboard eligibility. If eligible, prompts for player's name to add
         /// to the leaderboard.
@@ -38,18 +40,24 @@ namespace SimpCity {
             Console.WriteLine($"Congratulations! You made the high score board at position {lbPosition}!");
 
             string name;
-            do {
+            while (true) {
                 Console.ForegroundColor = ConsoleColor.DarkGray;
                 Console.Write("Please enter your name (max 20 chars): ");
                 Console.ResetColor();
 
                 name = Console.ReadLine().Trim();
-                if (name.Length > 20) {
+                if (name.Length == 0) {
+                    Utils.WriteLineColored("Your name cannot be empty!",
+                        foreground: ConsoleColor.Red);
+                    continue;
+                } else if (name.Length > 20) {
                     Utils.WriteLineColored($"Your name exceeds the limit by {name.Length - 20} chars!",
                         foreground: ConsoleColor.Red);
                     continue;
                 }
-            } while (false);
+
+                break;
+            };
 
             lb.AddScore(new LeaderboardScore {
                 PlayerName = name,
@@ -58,6 +66,47 @@ namespace SimpCity {
             });
 
             lb.Display();
+        }
+
+        /// <summary>
+        /// Blockingly read stdin for a single dimension (width/height).
+        /// </summary>
+        /// <returns>The dimension, -1 if no input.</returns>
+        static int ReadDimension(string prompt) {
+            int parsedDim = -1;
+            while (true) {
+                // Display prompt, usually asking for input
+                Console.ForegroundColor = ConsoleColor.DarkGray;
+                Console.Write(prompt);
+                Console.ResetColor();
+
+                string input = Console.ReadLine().Trim();
+                if (input.Length == 0) {
+                    // No input, let's go default
+                    break;
+                }
+
+                int parsed;
+                bool couldParse = int.TryParse(input, out parsed);
+                if (!couldParse || parsed <= 0) {
+                    Utils.WriteLineColored("Input must be an integer and larger than 0!",
+                        foreground: ConsoleColor.Red);
+                    continue;
+                }
+
+                // We set a defined limit to the maximum dimension
+                if (parsed > MAX_DIMENSION) {
+                    Utils.WriteLineColored($"Input must not be larger than {MAX_DIMENSION}!",
+                        foreground: ConsoleColor.Red);
+                    continue;
+                }
+
+                // Validated
+                parsedDim = parsed;
+                break;
+            };
+
+            return parsedDim;
         }
 
         static void Main(string[] args) {
@@ -110,6 +159,17 @@ namespace SimpCity {
                     lb.Display();
                 })
                 .AddHeading()
+                .AddOption("Change city size", (m) => {
+                    Console.WriteLine($"Your current city size is: {pSettings.GridWidth} \u00D7 {pSettings.GridHeight}");
+                    Console.WriteLine("Please enter your new desired city size, or press enter to skip.");
+
+                    int newWidth = ReadDimension($"New width, # columns: ({pSettings.GridWidth}) ");
+                    int newHeight = ReadDimension($"New height, # rows: ({pSettings.GridHeight}) ");
+
+                    // Set if requested
+                    if (newWidth >= 0) pSettings.GridWidth = newWidth;
+                    if (newHeight >= 0) pSettings.GridHeight = newHeight;
+                })
                 .AddOption("Toggle debug mode", (m) => {
                     pSettings.IsDebugMode = !pSettings.IsDebugMode;
                     Console.Write("Debug mode is now: ");
