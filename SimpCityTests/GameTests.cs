@@ -16,7 +16,7 @@ namespace SimpCityTests {
         public void BuildAt_PlacesBuilding_WhenCalledProperly() {
             Game game = new Game();
 
-            // Build a beach at 0,1
+            // Building various buildings
             game.BuildAt(game.buildingInfo[BuildingTypes.Beach], new CityGridPosition(0, 1));
             game.BuildAt(game.buildingInfo[BuildingTypes.Factory], new CityGridPosition(1, 1));
             game.BuildAt(game.buildingInfo[BuildingTypes.Highway], new CityGridPosition(0, 0));
@@ -25,7 +25,7 @@ namespace SimpCityTests {
             game.BuildAt(game.buildingInfo[BuildingTypes.Park], new CityGridPosition(1, 2));
             game.BuildAt(game.buildingInfo[BuildingTypes.Shop], new CityGridPosition(2, 0));
 
-            // Ensure that the building is at 0,1
+            // Ensures that the building is at specified coordinates above.
             Assert.IsTrue(TestUtils.IsGridEqual(game.grid, new string[4, 4] {
                 { "HWY", "BCH", "MON", null },
                 { "HSE", "FAC", "PRK", null },
