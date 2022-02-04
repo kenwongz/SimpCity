@@ -9,8 +9,8 @@
 
         public override int CalcScore(ScoreCalculationArchive archive) {
             int xPos = Position().X;
-            // scores 3 points if it is built in column A or column D, 1 otherwise
-            return (xPos == 0 || xPos == 3) ? 3 : 1;
+            // scores 3 points if it is built in column A or last column, 1 otherwise
+            return (xPos == 0 || xPos == (Info.Grid.Width - 1)) ? 3 : 1;
         }
     }
 }
