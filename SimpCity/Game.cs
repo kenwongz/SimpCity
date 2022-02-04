@@ -222,10 +222,15 @@ namespace SimpCity {
                 for (int x = 0; x < grid.Width; x++) {
                     try {
                         CityGridBuilding b = grid.Get(new CityGridPosition(x, y));
-                        if (b != null) {
+                        if (b != null && !calcArchive.IsCalculated(b)) {
                             buildingScores[b.Info.Type].Add(b.CalcScore(calcArchive));
-                            calcArchive.calculated(b); 
+
+                            // Set as calculated, if not already done by CalcScore
+                            if (!calcArchive.IsCalculated(b)) {
+                                calcArchive.Calculated(b);
+                            }
                         } else {
+                            // Ignore null building or calculated buildings
                             continue; 
                         }
                     } catch (Exception ex) {

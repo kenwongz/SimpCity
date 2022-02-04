@@ -33,6 +33,27 @@ namespace SimpCityTests {
         }
 
         /// <summary>
+        /// Grid test utility to easily batch add building types in the game.
+        /// </summary>
+        /// <example>
+        /// BatchGameBuild(game, {
+        ///      { BuildingTypes.House, null },
+        ///      { null, BuildingTypes.Beach }
+        /// });
+        /// </example>
+        public static void BatchGameBuild(Game game, BuildingTypes?[,] bTypes) {
+            for (int y = 0; y < game.GridHeight; y++) {
+                for (int x = 0; x < game.GridWidth; x++) {
+                    var bType = bTypes[x, y];
+                    if (!bType.HasValue) {
+                        continue;
+                    }
+                    game.BuildAt(game.buildingInfo[bType.Value], new CityGridPosition(x, y));
+                }
+            }
+        }
+
+        /// <summary>
         /// Utility to get the sum of all integers in the list.
         /// </summary>
         public static int TotalOf(List<int> intList) {
