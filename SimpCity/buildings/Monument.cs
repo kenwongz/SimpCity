@@ -10,7 +10,8 @@
             int score = 0;
             int xPos = Position().X;
             int yPos = Position().Y;
-            if(xPos == 0 && yPos == 0 || xPos == 0 && yPos )
+            if(xPos == 0 && yPos == 0 || xPos == 0 && yPos == (Info.Grid.Height - 1) || xPos == (Info.Grid.Width - 1) && yPos == (Info.Grid.Height - 1) ||
+                xPos == (Info.Grid.Width - 1) && yPos == 0)
             {
                 score += 2;
             }
