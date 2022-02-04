@@ -7,8 +7,17 @@
         public static string Code { get; } = "MON";
         public Monument(BuildingInfo info) : base(info) { }
         public override int CalcScore(ScoreCalculationArchive archive) {
-            // TODO: US-8
-            throw new System.NotImplementedException();
+            int score = 0;
+            int xPos = Position().X;
+            int yPos = Position().Y;
+            if(xPos == 0 && yPos == 0 || xPos == 0 && yPos )
+            {
+                score += 2;
+            }
+            else {
+                score += 1;
+            }
+            return score;
         }
     }
 }
