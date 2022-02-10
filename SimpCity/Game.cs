@@ -35,6 +35,14 @@ namespace SimpCity {
         protected internal int round;
         protected internal BuildingTypes[] currentBuildingPool;
 
+        int beach = 8;
+        int factory = 8;
+        int highway = 8;
+        int house = 8;
+        int monument = 8;
+        int park = 8;
+        int shop = 8;
+
         /// <summary>
         /// The max number of rounds that can be played in the game.
         /// </summary>
@@ -245,6 +253,48 @@ namespace SimpCity {
         }
 
         /// <summary>
+        /// Displays the number of buildings remaining.
+        /// </summary>
+        protected void DisplayNoOfBuildings() {
+            Console.WriteLine("REMAINING BUILDINGS");
+            Console.WriteLine("=====================");
+            Console.WriteLine("Beach: {0}", beach);
+            Console.WriteLine("Factory: {0}", factory);
+            Console.WriteLine("Highway: {0}", highway);
+            Console.WriteLine("House: {0}", house);
+            Console.WriteLine("Monument: {0}", monument);
+            Console.WriteLine("Park: {0}", park);
+            Console.WriteLine("Shop: {0}", shop);
+        }
+
+        protected void DecrementScore() {
+            // Identify type of building used to place in the game
+            foreach (var item in buildingInfo) {
+                if (item.Value.Code == "BCH") {
+                    beach -= 1;
+                }
+                if (item.Value.Code == "FAC") {
+                    factory -= 1;
+                }
+                if (item.Value.Code == "HWY") {
+                    highway -= 1;
+                }
+                if (item.Value.Code == "HSE") {
+                    house -= 1;
+                }
+                if (item.Value.Code == "MON") {
+                    monument -= 1;
+                }
+                if (item.Value.Code == "PRK") {
+                    park -= 1;
+                }
+                if (item.Value.Code == "SHP") {
+                    shop -= 1;
+                }
+            }
+        }
+
+        /// <summary>
         /// Displays the current score.
         /// </summary>
         protected void DisplayScores() {
@@ -389,37 +439,37 @@ namespace SimpCity {
                     if (col == "BCH") {
                         var b = buildingInfo[BuildingTypes.Beach].MakeNew();
                         grid.Add(b, new CityGridPosition(colcount - 1, count - 1));
-
+                        beach -= 1;
                     }
                     if (col == "FAC") {
                         var c = buildingInfo[BuildingTypes.Factory].MakeNew();
                         grid.Add(c, new CityGridPosition(colcount - 1, count - 1));
-
+                        factory -= 1;
                     }
                     if (col == "SHP") {
                         var d = buildingInfo[BuildingTypes.Shop].MakeNew();
                         grid.Add(d, new CityGridPosition(colcount - 1, count - 1));
-
+                        shop -= 1;
                     }
                     if (col == "HWY") {
                         var d = buildingInfo[BuildingTypes.Highway].MakeNew();
                         grid.Add(d, new CityGridPosition(colcount - 1, count - 1));
-
+                        highway -= 1;
                     }
                     if (col == "MON") {
                         var d = buildingInfo[BuildingTypes.Monument].MakeNew();
                         grid.Add(d, new CityGridPosition(colcount - 1, count - 1));
-
+                        monument -= 1;
                     }
                     if (col == "PRK") {
                         var d = buildingInfo[BuildingTypes.Park].MakeNew();
                         grid.Add(d, new CityGridPosition(colcount - 1, count - 1));
-
+                        park -= 1;
                     }
                     if (col == "HSE") {
                         var b = buildingInfo[BuildingTypes.House].MakeNew();
                         grid.Add(b, new CityGridPosition(colcount - 1, count - 1));
-
+                        house -= 1;
                     }
 
                 }
@@ -460,6 +510,7 @@ namespace SimpCity {
                                 // Trigger the make-move event
                                 (_) => OnMakeMove(item.Value)
                             );
+                            //DecrementScore();
                         }
                     } else {
                         // Show the current building pool
@@ -471,9 +522,12 @@ namespace SimpCity {
                                 // Trigger the make-move event
                                 (_) => OnMakeMove(buildingInfo[chosen])
                             );
+                            //DecrementScore();
                         }
                     }
                 });
+
+
 
             // Counts the number of times a placeholder should be made on the menu
             int placeholderCount = (options?.AllowAllBuildingTypes ?? false) ? buildingInfo.Count : 2;
@@ -483,7 +537,9 @@ namespace SimpCity {
             }
 
             // Add in the remaining options
-            menu.AddOption("See remaining buildings", (m) => Console.WriteLine("Todo remaining building"))
+            menu.AddOption("See remaining buildings", (m) => {
+                DisplayNoOfBuildings();
+            })
                 .AddOption("See current score", (m) => {
                     DisplayScores();
                 })
